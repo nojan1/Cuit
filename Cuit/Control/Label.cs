@@ -7,30 +7,25 @@ namespace Cuit.Control
 {
     public class Label : IControl
     {
+        public bool IsDirty { get; private set; }
         public string Text { get; set; }
-        public bool IsFocusable => false;
-
         public int Top { get; private set; }
         public int Left { get; private set; }
 
         public int Height => 1;
-        public int Width
-        {
-            get
-            {
-                return Text.Length;
-            }
-        }
+        public int Width => Text.Length;
 
         public Label(int top, int left)
         {
             Top = top;
             Left = left;
+            IsDirty = true;
         }
 
         public void Draw(Screenbuffer buffer)
         {
             buffer.DrawString(Top, Left, Text);
+            IsDirty = false;
         }
 
         public void HandleKeypress(ConsoleKeyInfo key)

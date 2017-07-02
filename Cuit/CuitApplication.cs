@@ -44,13 +44,22 @@ namespace Cuit
         public void Run<T>() where T : IScreen
         {
             ActiveScreen = InstantiateScreen<T>();
+
+            SetupConsole();
             Loop();
         }
 
         public void Run<T>(T screen) where T: IScreen
         {
             ActiveScreen = screen;
+
+            SetupConsole();
             Loop();
+        }
+
+        private void SetupConsole()
+        {
+            Console.CursorVisible = false;
         }
 
         private void Loop()
@@ -61,20 +70,23 @@ namespace Cuit
 
                 Render(Screenbuffer);
 
-                var key = Console.ReadKey();
+                var key = Console.ReadKey(true);
                 ActiveScreen.HandleKeypress(key);
             }
         }
 
         private void Render(Screenbuffer screenbuffer)
         {
-            Console.CursorVisible = false;
+            int cursorTop = Console.CursorTop;
+            int cursorLeft = Console.CursorLeft;
 
             foreach(var changedCharacter in screenbuffer.GetChangedCharacters(true))
             {
                 Console.SetCursorPosition(changedCharacter.Left, changedCharacter.Top);
                 Console.Write(changedCharacter.Character);
             }
+
+            Console.SetCursorPosition(cursorLeft, cursorTop);
         }
     }
 }

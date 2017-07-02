@@ -13,6 +13,12 @@ namespace Cuit.Sample
             var label = new Label(2, 10);
             label.Text = "Example string";
             Controls.Add(label);
+
+            var textbox = new Textbox(5, 10);
+            Controls.Add(textbox);
+
+            var textbox2 = new Textbox(10, 10);
+            Controls.Add(textbox2);
         }
     }
 }

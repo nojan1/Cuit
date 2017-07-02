@@ -24,7 +24,8 @@ namespace Cuit.Helpers
         private static readonly Dictionary<RectangleDrawStyle, char[]> _rectangleCharacters = new Dictionary<RectangleDrawStyle, char[]>
         {
             {RectangleDrawStyle.Clear, new char[] {'\0', '\0', '\0', '\0', '\0', '\0'} },
-            {RectangleDrawStyle.Single, new char[] {(char)196, (char)179, (char)218, (char)191, (char)217, (char)192} },
+            //{RectangleDrawStyle.Single, new char[] {(char)196, (char)179, (char)218, (char)191, (char)217, (char)192} },
+            {RectangleDrawStyle.Single, new char[] { '-', '|', '#', '#', '#', '#' } },
             {RectangleDrawStyle.Double, new char[] {'\0', '\0', '\0', '\0', '\0', '\0'} },
         };
         public static void DrawRectangle(this Screenbuffer buffer, RectangleDrawStyle drawStyle, int top, int left, int width, int height)

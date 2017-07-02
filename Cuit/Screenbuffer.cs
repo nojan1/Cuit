@@ -26,8 +26,12 @@ namespace Cuit
             set
             {
                 var character = Get(top, left);
-                character.Character = value;
-                character.IsDirty = true;
+
+                if (character.Character != value)
+                {
+                    character.Character = value;
+                    character.IsDirty = true;
+                }
             }
         }
 
@@ -46,7 +50,7 @@ namespace Cuit
         private BufferCharacter Get(int top, int left)
         {
             var character = _buffer.FirstOrDefault(c => c.Top == top && c.Left == left);
-            if(character == null)
+            if (character == null)
             {
                 character = new BufferCharacter
                 {

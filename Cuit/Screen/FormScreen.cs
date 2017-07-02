@@ -1,7 +1,9 @@
 ﻿using Cuit.Control;
+using Cuit.Control.Behaviors;
 using Cuit.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Cuit.Screen
@@ -23,9 +25,13 @@ namespace Cuit.Screen
 
         public void HandleKeypress(ConsoleKeyInfo key)
         {
-            if(key.Key == ConsoleKey.Tab)
+            if (key.Key == ConsoleKey.Tab)
             {
-                DrawFocusMarker(true);
+                if (ActiveControl is IFocusable)
+                {
+                    DrawFocusMarker(true);
+                    ((IFocusable)ActiveControl).OnLostFocus();
+                }
 
                 int previousTabIndex = _tabIndex;
 
@@ -35,9 +41,13 @@ namespace Cuit.Screen
 
                     if (_tabIndex >= Controls.Count)
                         _tabIndex = 0;
-                } while (!Controls[_tabIndex].IsFocusable && _tabIndex != previousTabIndex);
+                } while (!(Controls[_tabIndex] is IFocusable) && _tabIndex != previousTabIndex);
 
-                DrawFocusMarker(false);
+                if (ActiveControl is IFocusable)
+                {
+                    DrawFocusMarker(false);
+                    ((IFocusable)ActiveControl).OnGotFocus();
+                }
             }
 
             ActiveControl?.HandleKeypress(key);
@@ -45,7 +55,7 @@ namespace Cuit.Screen
 
         public void Update(Screenbuffer buffer)
         {
-            foreach(var control in Controls)
+            foreach (var control in Controls.Where(c => c.IsDirty))
             {
                 control.Draw(buffer);
             }
@@ -53,15 +63,12 @@ namespace Cuit.Screen
 
         private void DrawFocusMarker(bool clear)
         {
-            if (ActiveControl.IsFocusable)
-            {
-                int top = ActiveControl.Top - 1;
-                int left = ActiveControl.Left - 1;
-                int width = ActiveControl.Width + 2;
-                int height = ActiveControl.Height + 2;
+            int top = ActiveControl.Top - 1;
+            int left = ActiveControl.Left - 1;
+            int width = ActiveControl.Width + 2;
+            int height = ActiveControl.Height + 2;
 
-                Application.Screenbuffer.DrawRectangle(clear ? RectangleDrawStyle.Clear : RectangleDrawStyle.Single, top, left, width, height);
-            }
+            Application.Screenbuffer.DrawRectangle(clear ? RectangleDrawStyle.Clear : RectangleDrawStyle.Single, top, left, width, height);
         }
     }
 }
