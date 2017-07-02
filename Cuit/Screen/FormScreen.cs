@@ -58,6 +58,7 @@ namespace Cuit.Screen
             foreach (var control in Controls.Where(c => c.IsDirty))
             {
                 control.Draw(buffer);
+                control.IsDirty = false;
             }
         }
 

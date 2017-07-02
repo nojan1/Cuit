@@ -10,7 +10,7 @@ namespace Cuit.Control
     {
         private const int TEXT_MIN_WIDTH = 30;
 
-        public bool IsDirty { get; private set; }
+        public bool IsDirty { get; set; }
         public int Top { get; private set; }
         public int Left { get; private set; }
         public int Width => 2 + (_stringBuilder.Length > TEXT_MIN_WIDTH ? _stringBuilder.Length : TEXT_MIN_WIDTH);
@@ -48,8 +48,6 @@ namespace Cuit.Control
         {
             buffer.DrawRectangle(RectangleDrawStyle.Single, Top, Left, Width, Height);
             buffer.DrawString(Top + 1, Left + 1, Text); //TODO: Send chars directly from string build to avoid memory allocation
-
-            IsDirty = false;
         }
 
         public void HandleKeypress(ConsoleKeyInfo key)

@@ -38,8 +38,8 @@ namespace Cuit.Helpers
 
             for (int i = 0; i < height; i++)
             {
-                buffer[top + 1, left] = _rectangleCharacters[drawStyle][1];
-                buffer[top + 1, left + width - 1] = _rectangleCharacters[drawStyle][1];
+                buffer[top + i, left] = _rectangleCharacters[drawStyle][1];
+                buffer[top + i, left + width - 1] = _rectangleCharacters[drawStyle][1];
             }
 
             buffer[top, left] = _rectangleCharacters[drawStyle][2];

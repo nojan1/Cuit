@@ -7,7 +7,7 @@ namespace Cuit.Control
 {
     public class Label : IControl
     {
-        public bool IsDirty { get; private set; }
+        public bool IsDirty { get; set; }
         public string Text { get; set; }
         public int Top { get; private set; }
         public int Left { get; private set; }
@@ -25,7 +25,6 @@ namespace Cuit.Control
         public void Draw(Screenbuffer buffer)
         {
             buffer.DrawString(Top, Left, Text);
-            IsDirty = false;
         }
 
         public void HandleKeypress(ConsoleKeyInfo key)

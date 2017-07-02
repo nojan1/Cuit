@@ -10,7 +10,7 @@ namespace Cuit.Control
         int Left { get; }
         int Width { get; }
         int Height { get; }
-        bool IsDirty { get; }
+        bool IsDirty { get; set; }
         void Draw(Screenbuffer buffer);
         void HandleKeypress(ConsoleKeyInfo key);
     }
