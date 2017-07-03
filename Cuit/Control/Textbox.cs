@@ -3,6 +3,7 @@ using Cuit.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace Cuit.Control
 {
@@ -33,6 +34,7 @@ namespace Cuit.Control
 
         private StringBuilder _stringBuilder = new StringBuilder();
         private int _cursorPosition = 0;
+        private int _lastRenderTextLength = 0;
 
         public event EventHandler GotFocus = delegate { };
         public event EventHandler LostFocus = delegate { };
@@ -47,7 +49,22 @@ namespace Cuit.Control
         public void Draw(Screenbuffer buffer)
         {
             buffer.DrawRectangle(RectangleDrawStyle.Single, Left, Top, Width, Height);
-            buffer.DrawString(Left + 1, Top + 1, Text, ConsoleColor.White, ConsoleColor.Black); //TODO: Send chars directly from string build to avoid memory allocation
+
+            //TODO: Send chars directly from string build to avoid memory allocation
+            if (_lastRenderTextLength > _stringBuilder.Length)
+            {
+                buffer.DrawString(Left + 1, 
+                                  Top + 1, 
+                                  Text + string.Concat(Enumerable.Repeat(' ', _lastRenderTextLength - _stringBuilder.Length)), 
+                                  ConsoleColor.White, 
+                                  ConsoleColor.Black);
+            }
+            else
+            {
+                buffer.DrawString(Left + 1, Top + 1, Text, ConsoleColor.White, ConsoleColor.Black);
+            }
+
+            _lastRenderTextLength = _stringBuilder.Length;
         }
 
         public void HandleKeypress(ConsoleKeyInfo key)
