@@ -13,6 +13,7 @@ namespace Cuit.Sample
         {
             var label = new Label(5, 2);
             label.Text = "Example string";
+            label.Foreground = ConsoleColor.Red;
             Controls.Add(label);
 
             var textbox = new Textbox(5, 5);

@@ -14,7 +14,10 @@ namespace Cuit.Control
 
         public int Height => 1;
         public int Width => Text.Length;
-       
+
+        public ConsoleColor Foreground { get; set; } = Screenbuffer.DEFAULT_FOREGROUND;
+        public ConsoleColor Background { get; set; } = Screenbuffer.DEFAULT_BACKGROUND;
+
         public Label(int left, int top)
         {
             Top = top;
@@ -24,7 +27,7 @@ namespace Cuit.Control
 
         public void Draw(Screenbuffer buffer)
         {
-            buffer.DrawString(Left, Top, Text);
+            buffer.DrawString(Left, Top, Text, Foreground, Background);
         }
 
         public void HandleKeypress(ConsoleKeyInfo key)
