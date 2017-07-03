@@ -8,6 +8,6 @@ namespace Cuit.Screen
     {
         CuitApplication Application { get; set; }
         void HandleKeypress(ConsoleKeyInfo key);
-        void Update(Screenbuffer buffer);
+        void Update(Screenbuffer buffer, bool force);
     }
 }

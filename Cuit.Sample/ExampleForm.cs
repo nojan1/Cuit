@@ -28,6 +28,7 @@ namespace Cuit.Sample
             button.Text = "Click me";
             button.Click += (s, e) =>
             {
+                Application.SwitchTo<ExampleForm2>();
                 Console.Beep();
             };
             Controls.Add(button);
@@ -48,6 +49,24 @@ namespace Cuit.Sample
             });
 
             Controls.Add(listbox);
+        }
+    }
+
+    public class ExampleForm2 : FormScreen
+    {
+        public ExampleForm2()
+        {
+            var label = new Label(5, 2);
+            label.Text = "Form 2";
+            Controls.Add(label);
+
+            var button = new Button(5, 5);
+            button.Text = "Go back";
+            button.Click += (s, e) =>
+            {
+                Application.GoBack();
+            };
+            Controls.Add(button);
         }
     }
 }

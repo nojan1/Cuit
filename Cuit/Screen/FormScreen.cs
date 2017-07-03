@@ -45,9 +45,9 @@ namespace Cuit.Screen
             ActiveControl?.HandleKeypress(key);
         }
 
-        public void Update(Screenbuffer buffer)
+        public void Update(Screenbuffer buffer, bool force)
         {
-            foreach (var control in Controls.Where(c => c.IsDirty))
+            foreach (var control in Controls.Where(c => force || c.IsDirty))
             {
                 control.Draw(buffer);
                 control.IsDirty = false;

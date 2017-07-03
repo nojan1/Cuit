@@ -80,5 +80,10 @@ namespace Cuit
 
             return character;
         }
+
+        internal void Invalidate()
+        {
+            _buffer.Clear();
+        }
     }
 }

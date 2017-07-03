@@ -1,5 +1,6 @@
 ﻿using Cuit.Screen;
 using System;
+using System.Collections.Generic;
 
 namespace Cuit
 {
@@ -7,7 +8,9 @@ namespace Cuit
     {
         private int _width;
         private int _height;
-        private bool _quit;
+        private bool _fullRedrawPending = true;
+
+        public bool Quit { get; set; }
 
         private Screenbuffer _buffer;
         public Screenbuffer Screenbuffer
@@ -21,7 +24,8 @@ namespace Cuit
             }
         }
 
-        public IScreen ActiveScreen{ get; private set; }
+        private readonly Stack<IScreen> _screens = new Stack<IScreen>();
+        public IScreen ActiveScreen => _screens.Peek();
 
         public CuitApplication()
         {
@@ -31,6 +35,26 @@ namespace Cuit
         public CuitApplication(int width, int height)
         {
 
+        }
+
+        public T SwitchTo<T>() where T : IScreen
+        {
+            var screen = InstantiateScreen<T>();
+            return SwitchTo(screen);
+        }
+
+        public T SwitchTo<T>(T screen) where T : IScreen
+        {
+            _screens.Push(screen);
+            _fullRedrawPending = true;
+            return screen;
+        }
+
+        public IScreen GoBack()
+        {
+            _screens.Pop();
+            _fullRedrawPending = true;
+            return _screens.Peek();
         }
 
         public T InstantiateScreen<T>() where T : IScreen
@@ -43,7 +67,7 @@ namespace Cuit
 
         public void Run<T>() where T : IScreen
         {
-            ActiveScreen = InstantiateScreen<T>();
+            _screens.Push(InstantiateScreen<T>());
 
             SetupConsole();
             Loop();
@@ -51,7 +75,8 @@ namespace Cuit
 
         public void Run<T>(T screen) where T: IScreen
         {
-            ActiveScreen = screen;
+            screen.Application = this;
+            _screens.Push(screen);
 
             SetupConsole();
             Loop();
@@ -64,9 +89,20 @@ namespace Cuit
 
         private void Loop()
         {
-            while (!_quit)
+            while (!Quit)
             {
-                ActiveScreen.Update(Screenbuffer);
+                if (_fullRedrawPending)
+                {
+                    _fullRedrawPending = false;
+                    Console.Clear();
+                    Screenbuffer.Invalidate();
+
+                    ActiveScreen.Update(Screenbuffer, true);
+                }
+                else
+                {
+                    ActiveScreen.Update(Screenbuffer, false);
+                }
 
                 Render(Screenbuffer);
 

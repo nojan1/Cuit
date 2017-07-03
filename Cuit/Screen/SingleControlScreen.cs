@@ -21,7 +21,7 @@ namespace Cuit.Screen
             Control.HandleKeypress(key);
         }
 
-        public void Update(Screenbuffer buffer)
+        public void Update(Screenbuffer buffer, bool force)
         {
             Control.Draw(buffer);
         }
