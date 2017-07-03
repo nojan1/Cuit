@@ -10,17 +10,17 @@ namespace Cuit.Sample
     {
         public ExampleForm()
         {
-            var label = new Label(2, 5);
+            var label = new Label(5, 2);
             label.Text = "Example string";
             Controls.Add(label);
 
             var textbox = new Textbox(5, 5);
             Controls.Add(textbox);
 
-            var textbox2 = new Textbox(10, 5);
+            var textbox2 = new Textbox(5, 10);
             Controls.Add(textbox2);
 
-            var button = new Button(15, 5);
+            var button = new Button(5, 15);
             button.Text = "Click me";
             button.Click += (s, e) =>
             {

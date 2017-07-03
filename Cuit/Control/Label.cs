@@ -14,8 +14,8 @@ namespace Cuit.Control
 
         public int Height => 1;
         public int Width => Text.Length;
-
-        public Label(int top, int left)
+       
+        public Label(int left, int top)
         {
             Top = top;
             Left = left;
@@ -24,7 +24,7 @@ namespace Cuit.Control
 
         public void Draw(Screenbuffer buffer)
         {
-            buffer.DrawString(Top, Left, Text);
+            buffer.DrawString(Left, Top, Text);
         }
 
         public void HandleKeypress(ConsoleKeyInfo key)

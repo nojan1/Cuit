@@ -21,7 +21,7 @@ namespace Cuit.Control
         public event EventHandler GotFocus = delegate { };
         public event EventHandler LostFocus = delegate { };
 
-        public Button(int top, int left)
+        public Button(int left, int top)
         {
             Top = top;
             Left = left;
@@ -30,8 +30,8 @@ namespace Cuit.Control
 
         public void Draw(Screenbuffer buffer)
         {
-            buffer.DrawString(Top, Left, Text);
-            buffer.DrawString(Top + 1, Left, String.Concat(Enumerable.Repeat('-', Text.Length)));
+            buffer.DrawString(Left, Top, Text);
+            buffer.DrawString(Left, Top + 1, String.Concat(Enumerable.Repeat('-', Text.Length)));
 
             IsDirty = false;
         }

@@ -79,13 +79,19 @@ namespace Cuit
         {
             int cursorTop = Console.CursorTop;
             int cursorLeft = Console.CursorLeft;
+            var backgroundColor = Console.BackgroundColor;
+            var foregroundColor = Console.ForegroundColor;
 
             foreach(var changedCharacter in screenbuffer.GetChangedCharacters(true))
             {
+                Console.BackgroundColor = changedCharacter.Background;
+                Console.ForegroundColor = changedCharacter.Foreground;
                 Console.SetCursorPosition(changedCharacter.Left, changedCharacter.Top);
                 Console.Write(changedCharacter.Character);
             }
 
+            Console.BackgroundColor = backgroundColor;
+            Console.ForegroundColor = foregroundColor;
             Console.SetCursorPosition(cursorLeft, cursorTop);
         }
     }

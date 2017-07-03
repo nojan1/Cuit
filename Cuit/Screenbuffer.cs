@@ -10,29 +10,46 @@ namespace Cuit
         public int Top { get; set; }
         public int Left { get; set; }
         public char Character { get; set; }
+        public ConsoleColor Foreground { get; set; }
+        public ConsoleColor Background { get; set; } 
         public bool IsDirty { get; set; }
     }
 
     public class Screenbuffer
     {
-        private List<BufferCharacter> _buffer = new List<BufferCharacter>();
+        public const ConsoleColor DEFAULT_FOREGROUND = ConsoleColor.Gray;
+        public const ConsoleColor DEFAULT_BACKGROUND = ConsoleColor.Black;
 
-        public char this[int top, int left]
+        private readonly List<BufferCharacter> _buffer = new List<BufferCharacter>();
+
+        public char this[int left, int top]
         {
             get
             {
-                return Get(top, left).Character;
+                return Get(left, top).Character;
             }
             set
             {
-                var character = Get(top, left);
+                var character = Get(left, top);
 
                 if (character.Character != value)
                 {
+                    character.Background = DEFAULT_BACKGROUND;
+                    character.Foreground = DEFAULT_FOREGROUND;
                     character.Character = value;
                     character.IsDirty = true;
                 }
             }
+        }
+
+        public void SetChar(int left, int top, char character, ConsoleColor foregroundColor, ConsoleColor backgroundColor)
+        {
+            var charObject = Get(left, top);
+
+            charObject.Character = character;
+            charObject.Background = backgroundColor;
+            charObject.Foreground = foregroundColor;
+            charObject.IsDirty = true;
         }
 
         public ICollection<BufferCharacter> GetChangedCharacters(bool clear)
@@ -47,7 +64,7 @@ namespace Cuit
             return dirty;
         }
 
-        private BufferCharacter Get(int top, int left)
+        private BufferCharacter Get(int left, int top)
         {
             var character = _buffer.FirstOrDefault(c => c.Top == top && c.Left == left);
             if (character == null)

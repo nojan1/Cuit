@@ -37,7 +37,7 @@ namespace Cuit.Control
         public event EventHandler GotFocus = delegate { };
         public event EventHandler LostFocus = delegate { };
 
-        public Textbox(int top, int left)
+        public Textbox(int left, int top)
         {
             Top = top;
             Left = left;
@@ -46,8 +46,8 @@ namespace Cuit.Control
 
         public void Draw(Screenbuffer buffer)
         {
-            buffer.DrawRectangle(RectangleDrawStyle.Single, Top, Left, Width, Height);
-            buffer.DrawString(Top + 1, Left + 1, Text); //TODO: Send chars directly from string build to avoid memory allocation
+            buffer.DrawRectangle(RectangleDrawStyle.Single, Left, Top, Width, Height);
+            buffer.DrawString(Left + 1, Top + 1, Text, ConsoleColor.White, ConsoleColor.Black); //TODO: Send chars directly from string build to avoid memory allocation
         }
 
         public void HandleKeypress(ConsoleKeyInfo key)

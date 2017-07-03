@@ -69,7 +69,12 @@ namespace Cuit.Screen
             int width = ActiveControl.Width + 2;
             int height = ActiveControl.Height + 2;
 
-            Application.Screenbuffer.DrawRectangle(clear ? RectangleDrawStyle.Clear : RectangleDrawStyle.Single, top, left, width, height);
+            Application.Screenbuffer.DrawRectangle(clear ? RectangleDrawStyle.Clear : RectangleDrawStyle.SlantedCornersOnly, 
+                                                   left, 
+                                                   top, 
+                                                   width, 
+                                                   height,
+                                                   ConsoleColor.Cyan);
         }
     }
 }
