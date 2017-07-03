@@ -52,7 +52,7 @@ namespace Cuit.Control
             buffer.DrawString(Left + 1, Top + 1, "^v");
 
             var valueString = Value.ToString($"F{DecimalPlaces}");
-            valueString += string.Concat(Enumerable.Repeat(' ', Width - valueString.Length - 4));
+            valueString += string.Concat(Enumerable.Repeat(' ', Width - valueString.Length - 5));
 
             buffer.DrawString(Left + 4, Top + 1, valueString, ConsoleColor.White);
         }
