@@ -2,6 +2,7 @@
 using Cuit.Screen;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Cuit.Sample
@@ -29,10 +30,14 @@ namespace Cuit.Sample
             Controls.Add(button);
 
             var listbox = new Listbox<DateTimeOffset>(50, 2);
-            listbox.Items.Add(new ListItem<DateTimeOffset>(DateTimeOffset.Now));
-            listbox.Items.Add(new ListItem<DateTimeOffset>(DateTimeOffset.Now.AddDays(1)));
-            listbox.Items.Add(new ListItem<DateTimeOffset>(DateTimeOffset.Now.AddDays(2)));
-            listbox.Items.Add(new ListItem<DateTimeOffset>(DateTimeOffset.Now.AddDays(3)));
+            listbox.Width = 50;
+            listbox.Height = 8;
+
+            Enumerable.Range(0, 15).ToList().ForEach(i =>
+            {
+                listbox.Items.Add(new ListItem<DateTimeOffset>(DateTimeOffset.Now.AddDays(i)));
+            });
+
             Controls.Add(listbox);
         }
     }

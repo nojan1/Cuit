@@ -22,8 +22,35 @@ namespace Cuit.Control
         public bool IsDirty { get; set; }
         public int Top { get; private set; }
         public int Left { get; private set; }
-        public int Width => 4 + Items.Select(x => x.Value.ToString().Length).OrderByDescending(x => x).FirstOrDefault();
-        public int Height => 2 + Items.Count;
+
+        private int _width = -1;
+        public int Width
+        {
+            get
+            {
+                return _width == -1 ? 4 + Items.Select(x => x.Value.ToString().Length).OrderByDescending(x => x).FirstOrDefault() 
+                                    : _width;
+            }
+            set
+            {
+                _width = value;
+                IsDirty = true;
+            }
+        }
+
+        private int _height = -1;
+        public int Height
+        {
+            get
+            {
+                return _height == -1 ? 2 + Items.Count : _height;
+            }
+            set
+            {
+                _height = value;
+                IsDirty = true;
+            }
+        }
 
         private readonly List<ListItem<T>> _selected = new List<ListItem<T>>();
         public IEnumerable<ListItem<T>> Selected => _selected;
@@ -36,6 +63,7 @@ namespace Cuit.Control
 
         private bool _displayMarker = false;
         private int _markerPosition = 0;
+        private int _rowOffset = 0;
 
         public Listbox(int left, int top)
         {
@@ -48,22 +76,33 @@ namespace Cuit.Control
         {
             buffer.DrawRectangle(RectangleDrawStyle.Dotted, Left, Top, Width, Height);
 
-            for (int i = 0; i < Items.Count; i++)
+            for (int i = 0; i < ((_height == -1) ? Items.Count : _height - 2); i++)
             {
+                
                 buffer.DrawString(Left + 1,
                                   Top + i + 1,
-                                  "  " + Items[i].Value.ToString(),
+                                  FixItemStringLength("  " + Items[i + _rowOffset].Value.ToString()),
                                   ConsoleColor.White,
-                                  _selected.Contains(Items[i]) ? ConsoleColor.DarkGray : Screenbuffer.DEFAULT_BACKGROUND);
+                                  _selected.Contains(Items[i + _rowOffset]) ? ConsoleColor.DarkGray : Screenbuffer.DEFAULT_BACKGROUND);
 
-                if (_displayMarker && i == _markerPosition)
+                if (_displayMarker && i + _rowOffset == _markerPosition)
                 {
                     buffer.SetChar(Left + 1, 
-                                   Top + _markerPosition + 1, 
+                                   Top + 1 + _markerPosition - _rowOffset, 
                                    '>', 
-                                   ConsoleColor.Blue,
-                                   _selected.Contains(Items[i]) ? ConsoleColor.DarkGray : Screenbuffer.DEFAULT_BACKGROUND);
+                                   ConsoleColor.Magenta,
+                                   _selected.Contains(Items[i + _rowOffset]) ? ConsoleColor.DarkGray : Screenbuffer.DEFAULT_BACKGROUND);
                 }
+            }
+
+            if(_rowOffset > 0)
+            {
+                buffer.SetChar(Left + Width - 1, Top + 1, '^', ConsoleColor.DarkGray, Screenbuffer.DEFAULT_BACKGROUND);
+            }
+
+            if(_height != -1 && Items.Count > _height - 2)
+            {
+                buffer.SetChar(Left + Width - 1, Top + Height - 2, 'v', ConsoleColor.DarkGray, Screenbuffer.DEFAULT_BACKGROUND);
             }
         }
 
@@ -75,6 +114,8 @@ namespace Cuit.Control
                 {
                     _markerPosition = Items.Count - 1;
                 }
+
+                SyncRowOffset();
             }
             else if(key.Key == ConsoleKey.DownArrow)
             {
@@ -82,6 +123,8 @@ namespace Cuit.Control
                 {
                     _markerPosition = 0;
                 }
+
+                SyncRowOffset();
             }
             else if(key.Key == ConsoleKey.Spacebar)
             {
@@ -113,6 +156,44 @@ namespace Cuit.Control
             IsDirty = true;
 
             LostFocus(this, new EventArgs());
+        }
+
+        private string FixItemStringLength(string str)
+        {
+            if(_width != -1 && str.Length > _width - 3)
+            {
+                return str.Substring(0, _width - 3);
+            }else
+            {
+                return str;
+            }
+        }
+
+        private void SyncRowOffset()
+        {
+            if(_height == -1)
+            {
+                _rowOffset = 0;
+            }
+            else
+            {
+                int maxRows = _height - 2;
+                if (Items.Count > maxRows)
+                {
+                    if(_markerPosition >= maxRows)
+                    {
+                        _rowOffset = Math.Max(0, _markerPosition - maxRows + 1);
+                    }
+                    else
+                    {
+                        _rowOffset = 0;
+                    }
+                }
+                else
+                {
+                    _rowOffset = 0;
+                }
+            }
         }
     }
 }
