@@ -32,11 +32,10 @@ namespace Cuit.Helpers
         private static readonly Dictionary<RectangleDrawStyle, char[]> _rectangleCharacters = new Dictionary<RectangleDrawStyle, char[]>
         {
             {RectangleDrawStyle.Clear, new char[] {'\0', '\0', '\0', '\0', '\0', '\0'} },
-            //{RectangleDrawStyle.Single, new char[] {(char)196, (char)179, (char)218, (char)191, (char)217, (char)192} },
-            {RectangleDrawStyle.Single, new char[] { '-', '|', '#', '#', '#', '#' } },
-            {RectangleDrawStyle.SlantedCornersOnly, new char[] { '\0', '\0', '/', '\\', '/', '\\' } },
-            {RectangleDrawStyle.Double, new char[] {'\0', '\0', '\0', '\0', '\0', '\0'} },
-            {RectangleDrawStyle.Dotted, new char[] {'.', '.', '.', '.', '.', '.'} },
+            {RectangleDrawStyle.Single, new char[] {(char)0x2500, (char)0x2502, (char)0x250c, (char)0x2510, (char)0x2518, (char)0x2514} },
+            {RectangleDrawStyle.SlantedCornersOnly, new char[] { '\0', '\0', (char)0x2571, (char)0x2572, (char)0x2571, (char)0x2572 } },
+            {RectangleDrawStyle.Double, new char[] { (char)0x2550, (char)0x2551, (char)0x2554, (char)0x2557, (char)0x255d, (char)0x255a } },
+            {RectangleDrawStyle.Dotted, new char[] { (char)0x2509, (char)0x250b, '\0', '\0', '\0', '\0' } },
         };
         public static void DrawRectangle(this Screenbuffer buffer, 
                                          RectangleDrawStyle drawStyle, 

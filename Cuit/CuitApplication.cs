@@ -1,6 +1,7 @@
 ﻿using Cuit.Screen;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Cuit
 {
@@ -84,6 +85,7 @@ namespace Cuit
 
         private void SetupConsole()
         {
+            Console.OutputEncoding = Encoding.Unicode;
             Console.CursorVisible = false;
         }
 

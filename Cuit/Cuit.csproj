@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
+    <PackageId>Cuit</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Authors>Niklas Hedlund</Authors>
+    <Description>Console User Interface Toolkit</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>First release</PackageReleaseNotes>
+    <PackageTags>console toolkit ui label textbox button</PackageTags>
   </PropertyGroup>
 
 </Project>

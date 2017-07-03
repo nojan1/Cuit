@@ -11,10 +11,10 @@ namespace Cuit.Control
     {
         public int Top { get; private set; }
         public int Left { get; private set; }
-        public int Width => Text.Length;
-        public int Height => 2;
+        public int Width => Text.Length + 2;
+        public int Height => 3;
 
-        public bool IsDirty { get;  set; }
+        public bool IsDirty { get; set; }
         public string Text { get; set; }
 
         public event EventHandler Click = delegate { };
@@ -30,15 +30,13 @@ namespace Cuit.Control
 
         public void Draw(Screenbuffer buffer)
         {
-            buffer.DrawString(Left, Top, Text);
-            buffer.DrawString(Left, Top + 1, String.Concat(Enumerable.Repeat('-', Text.Length)));
-
-            IsDirty = false;
+            buffer.DrawRectangle(RectangleDrawStyle.Single, Left, Top, Width, Height);
+            buffer.DrawString(Left + 1, Top + 1, Text);
         }
 
         public void HandleKeypress(ConsoleKeyInfo key)
         {
-            if(key.Key == ConsoleKey.Enter || key.Key == ConsoleKey.Spacebar)
+            if (key.Key == ConsoleKey.Enter || key.Key == ConsoleKey.Spacebar)
             {
                 Click(this, new EventArgs());
             }

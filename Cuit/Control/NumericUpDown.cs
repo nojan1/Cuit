@@ -48,7 +48,7 @@ namespace Cuit.Control
 
         public void Draw(Screenbuffer buffer)
         {
-            buffer.DrawRectangle(RectangleDrawStyle.Single, Left, Top, Width, Height);
+            buffer.DrawRectangle(RectangleDrawStyle.Double, Left, Top, Width, Height);
             buffer.DrawString(Left + 1, Top + 1, "^v");
 
             var valueString = Value.ToString($"F{DecimalPlaces}");
