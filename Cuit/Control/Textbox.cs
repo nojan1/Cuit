@@ -63,7 +63,7 @@ namespace Cuit.Control
 
         public void Draw(Screenbuffer buffer)
         {
-            buffer.DrawRectangle(RectangleDrawStyle.Double, Left, Top, Width, Height);
+            buffer.DrawRectangle(RectangleDrawStyle.ShadedSingle, Left, Top, Width, Height);
 
             var stringToDraw = _lastRenderTextLength > _stringBuilder.Length ? Text + string.Concat(Enumerable.Repeat(' ', _lastRenderTextLength - _stringBuilder.Length))
                                                                              : Text;

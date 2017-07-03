@@ -74,7 +74,7 @@ namespace Cuit.Control
 
         public void Draw(Screenbuffer buffer)
         {
-            buffer.DrawRectangle(RectangleDrawStyle.Dotted, Left, Top, Width, Height);
+            buffer.DrawRectangle(RectangleDrawStyle.ShadedSingle, Left, Top, Width, Height);
 
             for (int i = 0; i < ((_height == -1) ? Items.Count : _height - 2); i++)
             {

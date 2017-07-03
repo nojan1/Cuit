@@ -74,6 +74,18 @@ namespace Cuit.Sample
                 Application.GoBack();
             };
             Controls.Add(button);
+
+            var progressBar = new Progressbar(20, 9);
+            progressBar.Width = 40;
+            Controls.Add(progressBar);
+
+            var button2 = new Button(5, 9);
+            button2.Text = "Increment";
+            button2.Click += (s, e) =>
+            {
+                progressBar.Value++;
+            };
+            Controls.Add(button2);
         }
     }
 }
