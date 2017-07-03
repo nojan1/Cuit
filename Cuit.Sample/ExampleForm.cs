@@ -27,6 +27,13 @@ namespace Cuit.Sample
                 Console.Beep();
             };
             Controls.Add(button);
+
+            var listbox = new Listbox<DateTimeOffset>(50, 2);
+            listbox.Items.Add(new ListItem<DateTimeOffset>(DateTimeOffset.Now));
+            listbox.Items.Add(new ListItem<DateTimeOffset>(DateTimeOffset.Now.AddDays(1)));
+            listbox.Items.Add(new ListItem<DateTimeOffset>(DateTimeOffset.Now.AddDays(2)));
+            listbox.Items.Add(new ListItem<DateTimeOffset>(DateTimeOffset.Now.AddDays(3)));
+            Controls.Add(listbox);
         }
     }
 }
