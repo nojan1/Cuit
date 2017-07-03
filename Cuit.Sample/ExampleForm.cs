@@ -60,6 +60,13 @@ namespace Cuit.Sample
             label.Text = "Form 2";
             Controls.Add(label);
 
+            var label2 = new Label(30, 2);
+            Controls.Add(label2);
+
+            var numericUpDown = new NumericUpDown(30, 5);
+            numericUpDown.ValueChanged += (s, v) => label2.Text = v.ToString();
+            Controls.Add(numericUpDown);
+
             var button = new Button(5, 5);
             button.Text = "Go back";
             button.Click += (s, e) =>
