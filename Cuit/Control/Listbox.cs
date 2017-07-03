@@ -165,7 +165,8 @@ namespace Cuit.Control
                 return str.Substring(0, _width - 3);
             }else
             {
-                return str;
+                var padding = string.Concat(Enumerable.Repeat(' ', _width - 3 - str.Length));
+                return str + padding;
             }
         }
 

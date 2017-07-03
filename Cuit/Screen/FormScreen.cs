@@ -33,15 +33,7 @@ namespace Cuit.Screen
                     ((IFocusable)ActiveControl).OnLostFocus();
                 }
 
-                int previousTabIndex = _tabIndex;
-
-                do
-                {
-                    _tabIndex++;
-
-                    if (_tabIndex >= Controls.Count)
-                        _tabIndex = 0;
-                } while (!(Controls[_tabIndex] is IFocusable) && _tabIndex != previousTabIndex);
+                CycleControl(key.Modifiers.HasFlag(ConsoleModifiers.Shift) ? -1 : 1);
 
                 if (ActiveControl is IFocusable)
                 {
@@ -75,6 +67,22 @@ namespace Cuit.Screen
                                                    width, 
                                                    height,
                                                    ConsoleColor.Cyan);
+        }
+
+        private void CycleControl(int direction)
+        {
+            int previousTabIndex = _tabIndex;
+
+            do
+            {
+                _tabIndex += direction;
+
+                if (_tabIndex >= Controls.Count)
+                    _tabIndex = 0;
+                else if (_tabIndex < 0)
+                    _tabIndex = Controls.Count - 1;
+
+            } while (!(Controls[_tabIndex] is IFocusable) && _tabIndex != previousTabIndex);
         }
     }
 }
