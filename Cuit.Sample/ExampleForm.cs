@@ -86,6 +86,10 @@ namespace Cuit.Sample
                 progressBar.Value++;
             };
             Controls.Add(button2);
+
+            var checkbox = new Checkbox(5, 13);
+            checkbox.Text = "Check me to be awesome";
+            Controls.Add(checkbox);
         }
     }
 }
