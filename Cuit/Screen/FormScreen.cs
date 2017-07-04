@@ -31,7 +31,6 @@ namespace Cuit.Screen
         {
             if (key.Key == ConsoleKey.Tab)
             {
-
                 HandleControlGotLostFocus(true);
 
                 CycleControl(key.Modifiers.HasFlag(ConsoleModifiers.Shift) ? -1 : 1);

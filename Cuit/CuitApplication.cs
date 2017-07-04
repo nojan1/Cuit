@@ -98,6 +98,7 @@ namespace Cuit
 
         private void SetupConsole()
         {
+            Console.TreatControlCAsInput = true;
             Console.OutputEncoding = Encoding.Unicode;
             Console.CursorVisible = false;
         }
