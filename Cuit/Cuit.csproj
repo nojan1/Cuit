@@ -3,12 +3,19 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
     <PackageId>Cuit</PackageId>
-    <PackageVersion>1.0.0</PackageVersion>
+    <PackageVersion>1.0.0-alpha</PackageVersion>
     <Authors>Niklas Hedlund</Authors>
     <Description>Console User Interface Toolkit</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>First release</PackageReleaseNotes>
+    <PackageReleaseNotes>Alpha release, not stable</PackageReleaseNotes>
     <PackageTags>console toolkit ui label textbox button</PackageTags>
+    <Version>1.0.0-alpha</Version>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/nojan1/Cuit</PackageProjectUrl>
+    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/nojan1/Cuit.git</RepositoryUrl>
+    <RepositoryType>GIT</RepositoryType>
+    <Company />
   </PropertyGroup>
 
   <ItemGroup>
