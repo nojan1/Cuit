@@ -20,7 +20,7 @@ namespace Cuit
         public const ConsoleColor DEFAULT_FOREGROUND = ConsoleColor.Gray;
         public const ConsoleColor DEFAULT_BACKGROUND = ConsoleColor.Black;
 
-        private readonly List<BufferCharacter> _buffer = new List<BufferCharacter>();
+        private readonly Dictionary<(int left, int top), BufferCharacter> _buffer = new Dictionary<(int left, int top), BufferCharacter>();
 
         public char this[int left, int top]
         {
@@ -54,7 +54,7 @@ namespace Cuit
 
         public ICollection<BufferCharacter> GetChangedCharacters(bool clear)
         {
-            var dirty = _buffer.Where(b => b.IsDirty).ToList();
+            var dirty = _buffer.Values.Where(b => b.IsDirty).ToList();
 
             if (clear)
             {
@@ -66,19 +66,22 @@ namespace Cuit
 
         private BufferCharacter Get(int left, int top)
         {
-            var character = _buffer.FirstOrDefault(c => c.Top == top && c.Left == left);
-            if (character == null)
+            if (_buffer.ContainsKey((left, top)))
             {
-                character = new BufferCharacter
+                return _buffer[(left, top)];
+            }
+            else
+            {
+                var character = new BufferCharacter
                 {
                     Top = top,
                     Left = left,
                     IsDirty = false
                 };
-                _buffer.Add(character);
-            }
+                _buffer.Add((left, top), character);
 
-            return character;
+                return character;
+            }
         }
 
         internal void Invalidate()
