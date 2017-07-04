@@ -8,9 +8,11 @@ using System.Text;
 
 namespace Cuit.Screen
 {
-    public class FormScreen : IScreen
+    public class FormScreen : IScreen, ILoaded
     {
         private int _tabIndex = 0;
+
+        public event EventHandler Loaded = delegate { };
 
         public CuitApplication Application { get; set; }
         public List<IControl> Controls { get; private set; } = new List<IControl>();
@@ -23,23 +25,18 @@ namespace Cuit.Screen
             }
         }
 
+        public virtual void InstantiateComponents() { }
+
         public void HandleKeypress(ConsoleKeyInfo key)
         {
             if (key.Key == ConsoleKey.Tab)
             {
-                if (ActiveControl is IFocusable)
-                {
-                    DrawFocusMarker(true);
-                    ((IFocusable)ActiveControl).OnLostFocus();
-                }
+
+                HandleControlGotLostFocus(true);
 
                 CycleControl(key.Modifiers.HasFlag(ConsoleModifiers.Shift) ? -1 : 1);
 
-                if (ActiveControl is IFocusable)
-                {
-                    DrawFocusMarker(false);
-                    ((IFocusable)ActiveControl).OnGotFocus();
-                }
+                HandleControlGotLostFocus(false);
             }
 
             ActiveControl?.HandleKeypress(key);
@@ -51,6 +48,16 @@ namespace Cuit.Screen
             {
                 control.Draw(buffer);
                 control.IsDirty = false;
+            }
+        }
+
+        public void OnLoaded()
+        {
+            Loaded(this, new EventArgs());
+
+            foreach(var loadableControl in Controls.OfType<ILoaded>())
+            {
+                loadableControl.OnLoaded();
             }
         }
 
@@ -83,6 +90,23 @@ namespace Cuit.Screen
                     _tabIndex = Controls.Count - 1;
 
             } while (!(Controls[_tabIndex] is IFocusable) && _tabIndex != previousTabIndex);
+        }
+
+        private void HandleControlGotLostFocus(bool lostFocus)
+        {
+            var focusableControl = ActiveControl as IFocusable;
+            if (focusableControl != null)
+            {
+                DrawFocusMarker(lostFocus);
+
+                if (lostFocus) {
+                    focusableControl.OnLostFocus();
+                }
+                else
+                {
+                    focusableControl.OnGotFocus();
+                }
+            }
         }
     }
 }

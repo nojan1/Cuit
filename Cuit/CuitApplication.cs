@@ -3,6 +3,7 @@ using Cuit.Screen;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Cuit.Control.Behaviors;
 
 namespace Cuit
 {
@@ -49,6 +50,9 @@ namespace Cuit
         {
             _screens.Push(screen);
             _fullRedrawPending = true;
+
+            RaiseLoadedEventIfApplicable(screen);
+
             return screen;
         }
 
@@ -64,6 +68,12 @@ namespace Cuit
             var instance = Activator.CreateInstance<T>();
             instance.Application = this;
 
+            var formScreen = instance as FormScreen;
+            if(formScreen != null)
+            {
+                formScreen.InstantiateComponents();
+            }
+
             return instance;
         }
 
@@ -71,6 +81,7 @@ namespace Cuit
         {
             _screens.Push(InstantiateScreen<T>());
 
+            RaiseLoadedEventIfApplicable(ActiveScreen);
             SetupConsole();
             Loop();
         }
@@ -80,6 +91,7 @@ namespace Cuit
             screen.Application = this;
             _screens.Push(screen);
 
+            RaiseLoadedEventIfApplicable(screen);
             SetupConsole();
             Loop();
         }
@@ -132,6 +144,15 @@ namespace Cuit
             Console.BackgroundColor = backgroundColor;
             Console.ForegroundColor = foregroundColor;
             Console.SetCursorPosition(cursorLeft, cursorTop);
+        }
+
+        private void RaiseLoadedEventIfApplicable(IScreen screen)
+        {
+            var loaded = screen as ILoaded;
+            if(loaded != null)
+            {
+                loaded.OnLoaded();
+            }
         }
     }
 }
