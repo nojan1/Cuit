@@ -1,5 +1,6 @@
 ﻿using Cuit.Control.Behaviors;
 using Cuit.Helpers;
+using Cuit.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,17 +8,7 @@ using System.Linq;
 
 namespace Cuit.Control
 {
-    public class ListItem<T>
-    {
-        public ListItem(T value)
-        {
-            Value = value;
-        }
-
-        public T Value { get; set; }
-    }
-
-    public class Listbox<T> : IControl, IFocusable, ISelectable<ListItem<T>>
+    public class Listbox<T> : IControl, IFocusable, ISelectable<T>
     {
         public bool IsDirty { get; set; }
         public int Top { get; private set; }
@@ -28,7 +19,7 @@ namespace Cuit.Control
         {
             get
             {
-                return _width == -1 ? 4 + Items.Select(x => x.Value.ToString().Length).OrderByDescending(x => x).FirstOrDefault()
+                return _width == -1 ? 4 + Items.Select(x => x.ToString().Length).OrderByDescending(x => x).FirstOrDefault()
                                     : _width;
             }
             set
@@ -52,40 +43,59 @@ namespace Cuit.Control
             }
         }
 
-        private readonly List<ListItem<T>> _selected = new List<ListItem<T>>();
-        public IEnumerable<ListItem<T>> Selected => _selected;
+        private readonly List<T> _selected = new List<T>();
+        public IEnumerable<T> Selected => _selected;
 
         public bool Multiselect { get; set; }
         public bool Autoselect { get; set; } = false;
 
-        public List<ListItem<T>> Items { get; private set; } = new List<ListItem<T>>();
+        public ListItemCollection<T> Items { get; private set; } = new ListItemCollection<T>();
 
         public event EventHandler GotFocus = delegate { };
         public event EventHandler LostFocus = delegate { };
-        public event EventHandler<ListItem<T>> SelectionChanged = delegate { };
+        public event EventHandler<T> SelectionChanged = delegate { };
 
         private bool _displayMarker = false;
         private int _markerPosition = 0;
         private int _rowOffset = 0;
+        private int _lastRenderHeight = 0;
 
         public Listbox(int left, int top)
         {
             Top = top;
             Left = left;
             IsDirty = true;
+
+            Items.CollectionChanged += Items_CollectionChanged;
+        }
+
+        private void Items_CollectionChanged(object sender, EventArgs e)
+        {
+            if(_markerPosition > Items.Count - 1)
+            {
+                _markerPosition = Math.Max(0, Items.Count - 1);
+                _rowOffset = 0;
+            }
+
+            _selected.RemoveAll(s => !Items.Contains(s));
+
+            IsDirty = true;
         }
 
         public void Draw(Screenbuffer buffer)
         {
-            buffer.DrawRectangle(RectangleDrawStyle.ShadedSingle, Left, Top, Width, Height);
+            if (_lastRenderHeight == 0 || (_height == -1 && _lastRenderHeight < Items.Count || _height != -1 && _lastRenderHeight < _height - 2))
+            {
+                _lastRenderHeight = (_height == -1) ? Items.Count : _height - 2;
+            }
 
-            for (int i = 0; i < ((_height == -1) ? Items.Count : _height - 2); i++)
+            for (int i = 0; i < _lastRenderHeight; i++)
             {
                 if (i + _rowOffset <= Items.Count - 1)
                 {
                     buffer.DrawString(Left + 1,
                                       Top + i + 1,
-                                      FixItemStringLength("  " + Items[i + _rowOffset].Value.ToString()),
+                                      FixItemStringLength("  " + Items[i + _rowOffset].ToString()),
                                       ConsoleColor.White,
                                       _selected.Contains(Items[i + _rowOffset]) ? ConsoleColor.DarkGray : Screenbuffer.DEFAULT_BACKGROUND);
 
@@ -100,9 +110,12 @@ namespace Cuit.Control
                 }
                 else
                 {
-                    buffer.DrawString(Left + 1, Top + 1, FixItemStringLength(""));
+                    buffer.DrawString(Left, Top + 1 + i, string.Concat(Enumerable.Repeat(' ', Width)));
                 }
             }
+
+            buffer.DrawString(Left, Top + _lastRenderHeight + 1, string.Concat(Enumerable.Repeat(' ', Width)));
+            buffer.DrawRectangle(RectangleDrawStyle.ShadedSingle, Left, Top, Width, Height);
 
             if (_rowOffset > 0)
             {
@@ -117,7 +130,7 @@ namespace Cuit.Control
 
         public void HandleKeypress(ConsoleKeyInfo key)
         {
-            if (key.Key == ConsoleKey.UpArrow || key.Key == ConsoleKey.DownArrow)
+            if ((key.Key == ConsoleKey.UpArrow || key.Key == ConsoleKey.DownArrow) && Items.Any())
             {
                 _markerPosition += key.Key == ConsoleKey.UpArrow ? -1 : 1;
 
@@ -139,13 +152,13 @@ namespace Cuit.Control
 
                 SyncRowOffset();
             }
-            else if (key.Key == ConsoleKey.Spacebar)
+            else if (key.Key == ConsoleKey.Spacebar && !Autoselect)
             {
                 var item = Items[_markerPosition];
                 if (_selected.Contains(item))
                 {
                     _selected.Remove(item);
-                    SelectionChanged(this, null);
+                    SelectionChanged(this, default(T));
                 }
                 else
                 {
@@ -162,6 +175,11 @@ namespace Cuit.Control
 
         public void OnGotFocus()
         {
+            if(Autoselect && !Multiselect && Items.Any() && !_selected.Any())
+            {
+                _selected.Add(Items[0]);
+            }
+
             _displayMarker = true;
             IsDirty = true;
 

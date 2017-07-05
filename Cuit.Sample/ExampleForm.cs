@@ -1,4 +1,5 @@
 ﻿using Cuit.Control;
+using Cuit.Models;
 using Cuit.Screen;
 using System;
 using System.Collections.Generic;
@@ -24,30 +25,21 @@ namespace Cuit.Sample
             textbox2.Width = 40;
             Controls.Add(textbox2);
 
-            var button = new Button(5, 15);
-            button.Text = "Click me";
-            button.Click += (s, e) =>
-            {
-                Application.SwitchTo<ExampleForm2>();
-                Console.Beep();
-            };
-            Controls.Add(button);
-
             var label2 = new Label(50, 2);
             label2.Text = "And a listbox below me";
             label2.Foreground = ConsoleColor.Green;
             label2.Background = ConsoleColor.DarkMagenta;
             Controls.Add(label2);
 
-            var listbox = new Listbox<DateTimeOffset>(50, 4);
-            listbox.Multiselect = true;
-            listbox.Autoselect = false;
+            var listbox = new Listbox<DateTimeOffset?>(50, 4);
+            listbox.Multiselect = false;
+            listbox.Autoselect = true;
             listbox.Width = 50;
-            listbox.Height = 15;
+            //listbox.Height = 15;
 
             Enumerable.Range(0, 15).ToList().ForEach(i =>
             {
-                listbox.Items.Add(new ListItem<DateTimeOffset>(DateTimeOffset.Now.AddDays(i)));
+                listbox.Items.Add(DateTimeOffset.Now.AddDays(i));
             });
 
             listbox.SelectionChanged += (s, v) =>
@@ -58,11 +50,20 @@ namespace Cuit.Sample
                 }
                 else
                 {
-                    label2.Text = v.Value.ToString();
+                    label2.Text = v.ToString();
                 }
             };
 
             Controls.Add(listbox);
+
+            var button = new Button(5, 15);
+            button.Text = "Click me";
+            button.Click += (s, e) =>
+            {
+                listbox.Items.Clear();
+                //Application.SwitchTo<ExampleForm2>();
+            };
+            Controls.Add(button);
         }
     }
 
