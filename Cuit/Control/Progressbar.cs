@@ -6,16 +6,12 @@ using System.Text;
 
 namespace Cuit.Control
 {
-    public class Progressbar : IControl
+    public class Progressbar : ControlBase
     {
-        public bool IsDirty { get; set; }
-        public int Top { get; private set; }
-        public int Left { get; private set; }
-
-        public int Height => 3;
+        public override int Height => 3;
 
         private int _width = -1;
-        public int Width
+        public override int Width
         {
             get
             {
@@ -50,7 +46,7 @@ namespace Cuit.Control
             IsDirty = true;
         }
 
-        public void Draw(Screenbuffer buffer)
+        public override void Draw(Screenbuffer buffer)
         {
             buffer.DrawRectangle(RectangleDrawStyle.Single, Left, Top, Width, Height);
 
@@ -73,7 +69,7 @@ namespace Cuit.Control
             buffer.DrawString(percentageStringLeft, Top + 1, percentageString, ConsoleColor.White, ConsoleColor.DarkBlue);
         }
 
-        public void HandleKeypress(ConsoleKeyInfo key)
+        public override void HandleKeypress(ConsoleKeyInfo key)
         {
             //Noop
         }

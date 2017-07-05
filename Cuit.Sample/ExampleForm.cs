@@ -35,7 +35,7 @@ namespace Cuit.Sample
             listbox.Multiselect = false;
             listbox.Autoselect = true;
             listbox.Width = 50;
-            //listbox.Height = 15;
+            listbox.Height = 15;
 
             Enumerable.Range(0, 15).ToList().ForEach(i =>
             {
@@ -60,8 +60,8 @@ namespace Cuit.Sample
             button.Text = "Click me";
             button.Click += (s, e) =>
             {
-                listbox.Items.Clear();
-                //Application.SwitchTo<ExampleForm2>();
+                //listbox.IsVisible = !listbox.IsVisible;
+                Application.SwitchTo<ExampleForm2>();
             };
             Controls.Add(button);
         }

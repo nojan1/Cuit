@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Cuit.Helpers
@@ -65,6 +66,23 @@ namespace Cuit.Helpers
             buffer.SetChar(left + width - 1, top, _rectangleCharacters[drawStyle][5], foreground, background);
             buffer.SetChar(left + width - 1, top + height - 1, _rectangleCharacters[drawStyle][6], foreground, background);
             buffer.SetChar(left, top + height - 1, _rectangleCharacters[drawStyle][7], foreground, background);
+        }
+
+        public static void DrawFill(this Screenbuffer buffer,
+                                    char fillChar,
+                                    int left,
+                                    int top,
+                                    int width,
+                                    int height,
+                                    ConsoleColor foreground = Screenbuffer.DEFAULT_FOREGROUND,
+                                    ConsoleColor background = Screenbuffer.DEFAULT_BACKGROUND)
+        {
+            var line = string.Concat(Enumerable.Repeat(fillChar, width));
+
+            for(int i = 0; i < height; i++)
+            {
+                buffer.DrawString(left, top + i, line, foreground, background);
+            }
         }
     }
 }

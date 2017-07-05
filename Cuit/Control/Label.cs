@@ -6,14 +6,11 @@ using System.Text;
 
 namespace Cuit.Control
 {
-    public class Label : IControl
+    public class Label : ControlBase
     {
-        public bool IsDirty { get; set; }
-        public int Top { get; private set; }
-        public int Left { get; private set; }
 
-        public int Height => 1;
-        public int Width => Text.Length;
+        public override int Height => 1;
+        public override int Width => Text.Length;
 
         public ConsoleColor Foreground { get; set; } = Screenbuffer.DEFAULT_FOREGROUND;
         public ConsoleColor Background { get; set; } = Screenbuffer.DEFAULT_BACKGROUND;
@@ -30,7 +27,7 @@ namespace Cuit.Control
             IsDirty = true;
         }
 
-        public void Draw(Screenbuffer buffer)
+        public override void Draw(Screenbuffer buffer)
         {
             var stringToDraw = Text;
             if(Text.Length < _lastRenderLength)
@@ -43,7 +40,7 @@ namespace Cuit.Control
             _lastRenderLength = Text.Length;
         }
 
-        public void HandleKeypress(ConsoleKeyInfo key)
+        public override void HandleKeypress(ConsoleKeyInfo key)
         {
             //Nope
         }

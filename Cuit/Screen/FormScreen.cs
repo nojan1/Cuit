@@ -45,7 +45,15 @@ namespace Cuit.Screen
         {
             foreach (var control in Controls.Where(c => force || c.IsDirty))
             {
-                control.Draw(buffer);
+                if (control.IsVisible)
+                {
+                    control.Draw(buffer);
+                }
+                else
+                {
+                    buffer.DrawFill(' ', control.Left, control.Top, control.Width, control.Height);
+                }
+
                 control.IsDirty = false;
             }
         }
@@ -54,7 +62,7 @@ namespace Cuit.Screen
         {
             Loaded(this, new EventArgs());
 
-            foreach(var loadableControl in Controls.OfType<ILoaded>())
+            foreach (var loadableControl in Controls.OfType<ILoaded>())
             {
                 loadableControl.OnLoaded();
             }
@@ -67,10 +75,10 @@ namespace Cuit.Screen
             int width = ActiveControl.Width + 2;
             int height = ActiveControl.Height + 2;
 
-            Application.Screenbuffer.DrawRectangle(clear ? RectangleDrawStyle.Clear : RectangleDrawStyle.Dotted, 
-                                                   left, 
-                                                   top, 
-                                                   width, 
+            Application.Screenbuffer.DrawRectangle(clear ? RectangleDrawStyle.Clear : RectangleDrawStyle.Dotted,
+                                                   left,
+                                                   top,
+                                                   width,
                                                    height,
                                                    ConsoleColor.Cyan);
         }
@@ -88,7 +96,23 @@ namespace Cuit.Screen
                 else if (_tabIndex < 0)
                     _tabIndex = Controls.Count - 1;
 
-            } while (!(Controls[_tabIndex] is IFocusable) && _tabIndex != previousTabIndex);
+            } while (KeepCycling(previousTabIndex));
+        }
+
+        private bool KeepCycling(int previousTabIndex)
+        {
+            var focusable = Controls[_tabIndex] as IFocusable;
+            if (focusable == null)
+            {
+                return true;
+            }
+
+            if (focusable.IsEnabled)
+            {
+                return false;
+            }
+
+            return _tabIndex != previousTabIndex;
         }
 
         private void HandleControlGotLostFocus(bool lostFocus)
@@ -98,7 +122,8 @@ namespace Cuit.Screen
             {
                 DrawFocusMarker(lostFocus);
 
-                if (lostFocus) {
+                if (lostFocus)
+                {
                     focusableControl.OnLostFocus();
                 }
                 else

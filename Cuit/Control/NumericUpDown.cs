@@ -7,17 +7,15 @@ using System.Text;
 
 namespace Cuit.Control
 {
-    public class NumericUpDown : IControl, IFocusable, IValueChange<decimal>
+    public class NumericUpDown : ControlBase, IFocusable, IValueChange<decimal>
     {
-        public bool IsDirty { get; set; }
+        public bool IsEnabled { get; set; } = true;
         public string Text { get; set; }
-        public int Top { get; private set; }
-        public int Left { get; private set; }
 
-        public int Height => 3;
+        public override int Height => 3;
 
         private int _width = -1;
-        public int Width
+        public override int Width
         {
             get
             {
@@ -46,7 +44,7 @@ namespace Cuit.Control
             IsDirty = true;
         }
 
-        public void Draw(Screenbuffer buffer)
+        public override void Draw(Screenbuffer buffer)
         {
             buffer.DrawRectangle(RectangleDrawStyle.Double, Left, Top, Width, Height);
             buffer.DrawString(Left + 1, Top + 1, "^v");
@@ -57,7 +55,7 @@ namespace Cuit.Control
             buffer.DrawString(Left + 4, Top + 1, valueString, ConsoleColor.White);
         }
 
-        public void HandleKeypress(ConsoleKeyInfo key)
+        public override void HandleKeypress(ConsoleKeyInfo key)
         {
             switch (key.Key)
             {

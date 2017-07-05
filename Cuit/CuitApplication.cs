@@ -9,8 +9,6 @@ namespace Cuit
 {
     public class CuitApplication
     {
-        private int _width;
-        private int _height;
         private bool _fullRedrawPending = true;
 
         public bool Quit { get; set; }
@@ -32,12 +30,13 @@ namespace Cuit
 
         public CuitApplication()
         {
-
+            //Use default buffer size
         }
 
         public CuitApplication(int width, int height)
         {
-
+            Console.BufferHeight = height;
+            Console.BufferWidth = width;
         }
 
         public T SwitchTo<T>() where T : IScreen

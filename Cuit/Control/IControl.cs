@@ -6,6 +6,7 @@ namespace Cuit.Control
 {
     public interface IControl
     {
+        bool IsVisible { get; set; }
         int Top { get; }
         int Left { get; }
         int Width { get; }

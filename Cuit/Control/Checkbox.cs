@@ -8,14 +8,12 @@ using System.Text;
 
 namespace Cuit.Control
 {
-    public class Checkbox : IControl, IFocusable, IValueChange<bool>
+    public class Checkbox : ControlBase, IFocusable, IValueChange<bool>
     {
-        public bool IsDirty { get; set; }
-        public int Top { get; private set; }
-        public int Left { get; private set; }
-
-        public int Height => 1;
-        public int Width => 4 + Text.Length;
+        public bool IsEnabled { get; set; } = true;
+      
+        public override int Height => 1;
+        public override int Width => 4 + Text.Length;
 
         private string _text = "";
         public string Text { get { return _text; } set { _text = value; IsDirty = true; } }
@@ -36,7 +34,7 @@ namespace Cuit.Control
             IsDirty = true;
         }
 
-        public void Draw(Screenbuffer buffer)
+        public override void Draw(Screenbuffer buffer)
         {
             var stringToRender = $"{(Checked ? "[x]" : "[ ]")} {Text}";
             if(stringToRender.Length < _lastRenderLength)
@@ -49,7 +47,7 @@ namespace Cuit.Control
             buffer.DrawString(Left, Top, stringToRender);
         }
 
-        public void HandleKeypress(ConsoleKeyInfo key)
+        public override void HandleKeypress(ConsoleKeyInfo key)
         {
             if(key.Key == ConsoleKey.Spacebar)
             {

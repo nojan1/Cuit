@@ -7,14 +7,12 @@ using System.Linq;
 
 namespace Cuit.Control
 {
-    public class Button : IControl, IClickable, IFocusable
+    public class Button : ControlBase, IClickable, IFocusable
     {
-        public int Top { get; private set; }
-        public int Left { get; private set; }
-        public int Width => Text.Length + 2;
-        public int Height => 3;
+        public bool IsEnabled { get; set; } = true;
+        public override int Width => Text.Length + 2;
+        public override int Height => 3;
 
-        public bool IsDirty { get; set; }
         public string Text { get; set; }
 
         public event EventHandler Click = delegate { };
@@ -28,13 +26,13 @@ namespace Cuit.Control
             IsDirty = true;
         }
 
-        public void Draw(Screenbuffer buffer)
+        public override void Draw(Screenbuffer buffer)
         {
             buffer.DrawRectangle(RectangleDrawStyle.Single, Left, Top, Width, Height);
             buffer.DrawString(Left + 1, Top + 1, Text);
         }
 
-        public void HandleKeypress(ConsoleKeyInfo key)
+        public override void HandleKeypress(ConsoleKeyInfo key)
         {
             if (key.Key == ConsoleKey.Enter || key.Key == ConsoleKey.Spacebar)
             {

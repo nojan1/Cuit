@@ -8,14 +8,12 @@ using System.Linq;
 
 namespace Cuit.Control
 {
-    public class Listbox<T> : IControl, IFocusable, ISelectable<T>
+    public class Listbox<T> : ControlBase, IFocusable, ISelectable<T>
     {
-        public bool IsDirty { get; set; }
-        public int Top { get; private set; }
-        public int Left { get; private set; }
-
+        public bool IsEnabled { get; set; } = true;
+      
         private int _width = -1;
-        public int Width
+        public override int Width
         {
             get
             {
@@ -30,7 +28,7 @@ namespace Cuit.Control
         }
 
         private int _height = -1;
-        public int Height
+        public override int Height
         {
             get
             {
@@ -82,7 +80,7 @@ namespace Cuit.Control
             IsDirty = true;
         }
 
-        public void Draw(Screenbuffer buffer)
+        public override void Draw(Screenbuffer buffer)
         {
             if (_lastRenderHeight == 0 || (_height == -1 && _lastRenderHeight < Items.Count || _height != -1 && _lastRenderHeight < _height - 2))
             {
@@ -128,7 +126,7 @@ namespace Cuit.Control
             }
         }
 
-        public void HandleKeypress(ConsoleKeyInfo key)
+        public override void HandleKeypress(ConsoleKeyInfo key)
         {
             if ((key.Key == ConsoleKey.UpArrow || key.Key == ConsoleKey.DownArrow) && Items.Any())
             {

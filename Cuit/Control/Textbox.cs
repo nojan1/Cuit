@@ -7,16 +7,14 @@ using System.Linq;
 
 namespace Cuit.Control
 {
-    public class Textbox : IControl, IFocusable
+    public class Textbox : ControlBase, IFocusable
     {
         private const int TEXT_MIN_WIDTH = 30;
 
-        public bool IsDirty { get; set; }
-        public int Top { get; private set; }
-        public int Left { get; private set; }
-
+        public bool IsEnabled { get; set; } = true;
+   
         private int _width = -1;
-        public int Width
+        public override int Width
         {
             get
             {
@@ -29,7 +27,7 @@ namespace Cuit.Control
                 IsDirty = true;
             }
         }
-        public int Height => 3;
+        public override int Height => 3;
 
         public string Text
         {
@@ -61,7 +59,7 @@ namespace Cuit.Control
             IsDirty = true;
         }
 
-        public void Draw(Screenbuffer buffer)
+        public override void Draw(Screenbuffer buffer)
         {
             buffer.DrawRectangle(RectangleDrawStyle.ShadedSingle, Left, Top, Width, Height);
 
@@ -81,7 +79,7 @@ namespace Cuit.Control
             _lastRenderTextLength = _stringBuilder.Length;
         }
 
-        public void HandleKeypress(ConsoleKeyInfo key)
+        public override void HandleKeypress(ConsoleKeyInfo key)
         {
             if (key.Key == ConsoleKey.LeftArrow)
             {
