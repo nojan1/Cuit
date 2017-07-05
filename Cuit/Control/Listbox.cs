@@ -28,7 +28,7 @@ namespace Cuit.Control
         {
             get
             {
-                return _width == -1 ? 4 + Items.Select(x => x.Value.ToString().Length).OrderByDescending(x => x).FirstOrDefault() 
+                return _width == -1 ? 4 + Items.Select(x => x.Value.ToString().Length).OrderByDescending(x => x).FirstOrDefault()
                                     : _width;
             }
             set
@@ -55,6 +55,9 @@ namespace Cuit.Control
         private readonly List<ListItem<T>> _selected = new List<ListItem<T>>();
         public IEnumerable<ListItem<T>> Selected => _selected;
 
+        public bool Multiselect { get; set; }
+        public bool Autoselect { get; set; } = false;
+
         public List<ListItem<T>> Items { get; private set; } = new List<ListItem<T>>();
 
         public event EventHandler GotFocus = delegate { };
@@ -78,29 +81,35 @@ namespace Cuit.Control
 
             for (int i = 0; i < ((_height == -1) ? Items.Count : _height - 2); i++)
             {
-                
-                buffer.DrawString(Left + 1,
-                                  Top + i + 1,
-                                  FixItemStringLength("  " + Items[i + _rowOffset].Value.ToString()),
-                                  ConsoleColor.White,
-                                  _selected.Contains(Items[i + _rowOffset]) ? ConsoleColor.DarkGray : Screenbuffer.DEFAULT_BACKGROUND);
-
-                if (_displayMarker && i + _rowOffset == _markerPosition)
+                if (i + _rowOffset <= Items.Count - 1)
                 {
-                    buffer.SetChar(Left + 1, 
-                                   Top + 1 + _markerPosition - _rowOffset, 
-                                   '>', 
-                                   ConsoleColor.Magenta,
-                                   _selected.Contains(Items[i + _rowOffset]) ? ConsoleColor.DarkGray : Screenbuffer.DEFAULT_BACKGROUND);
+                    buffer.DrawString(Left + 1,
+                                      Top + i + 1,
+                                      FixItemStringLength("  " + Items[i + _rowOffset].Value.ToString()),
+                                      ConsoleColor.White,
+                                      _selected.Contains(Items[i + _rowOffset]) ? ConsoleColor.DarkGray : Screenbuffer.DEFAULT_BACKGROUND);
+
+                    if (_displayMarker && i + _rowOffset == _markerPosition)
+                    {
+                        buffer.SetChar(Left + 1,
+                                       Top + 1 + _markerPosition - _rowOffset,
+                                       '>',
+                                       ConsoleColor.Magenta,
+                                       _selected.Contains(Items[i + _rowOffset]) ? ConsoleColor.DarkGray : Screenbuffer.DEFAULT_BACKGROUND);
+                    }
+                }
+                else
+                {
+                    buffer.DrawString(Left + 1, Top + 1, FixItemStringLength(""));
                 }
             }
 
-            if(_rowOffset > 0)
+            if (_rowOffset > 0)
             {
                 buffer.SetChar(Left + Width - 1, Top + 1, '^', ConsoleColor.DarkGray, Screenbuffer.DEFAULT_BACKGROUND);
             }
 
-            if(_height != -1 && Items.Count > _height - 2)
+            if (_height != -1 && Items.Count > _height - 2)
             {
                 buffer.SetChar(Left + Width - 1, Top + Height - 2, 'v', ConsoleColor.DarkGray, Screenbuffer.DEFAULT_BACKGROUND);
             }
@@ -108,34 +117,43 @@ namespace Cuit.Control
 
         public void HandleKeypress(ConsoleKeyInfo key)
         {
-            if(key.Key == ConsoleKey.UpArrow)
+            if (key.Key == ConsoleKey.UpArrow || key.Key == ConsoleKey.DownArrow)
             {
-                if(--_markerPosition < 0)
+                _markerPosition += key.Key == ConsoleKey.UpArrow ? -1 : 1;
+
+                if (_markerPosition < 0)
                 {
                     _markerPosition = Items.Count - 1;
-                }
-
-                SyncRowOffset();
-            }
-            else if(key.Key == ConsoleKey.DownArrow)
-            {
-                if(++_markerPosition > Items.Count - 1)
+                }else if(_markerPosition > Items.Count - 1)
                 {
                     _markerPosition = 0;
                 }
 
+                if(Autoselect && !Multiselect)
+                {
+                    _selected.Clear();
+                    _selected.Add(Items[_markerPosition]);
+
+                    SelectionChanged(this, Items[_markerPosition]);
+                }
+
                 SyncRowOffset();
             }
-            else if(key.Key == ConsoleKey.Spacebar)
+            else if (key.Key == ConsoleKey.Spacebar)
             {
                 var item = Items[_markerPosition];
                 if (_selected.Contains(item))
                 {
                     _selected.Remove(item);
+                    SelectionChanged(this, null);
                 }
                 else
                 {
-                    _selected.Add(item);
+                    if (Multiselect || !_selected.Any())
+                    {
+                        _selected.Add(item);
+                        SelectionChanged(this, item);
+                    }
                 }
             }
 
@@ -160,10 +178,11 @@ namespace Cuit.Control
 
         private string FixItemStringLength(string str)
         {
-            if(_width != -1 && str.Length > _width - 3)
+            if (_width != -1 && str.Length > _width - 3)
             {
                 return str.Substring(0, _width - 3);
-            }else
+            }
+            else
             {
                 var padding = string.Concat(Enumerable.Repeat(' ', _width - 3 - str.Length));
                 return str + padding;
@@ -172,7 +191,7 @@ namespace Cuit.Control
 
         private void SyncRowOffset()
         {
-            if(_height == -1)
+            if (_height == -1)
             {
                 _rowOffset = 0;
             }
@@ -181,7 +200,7 @@ namespace Cuit.Control
                 int maxRows = _height - 2;
                 if (Items.Count > maxRows)
                 {
-                    if(_markerPosition >= maxRows)
+                    if (_markerPosition >= maxRows)
                     {
                         _rowOffset = Math.Max(0, _markerPosition - maxRows + 1);
                     }

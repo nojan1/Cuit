@@ -40,6 +40,8 @@ namespace Cuit.Sample
             Controls.Add(label2);
 
             var listbox = new Listbox<DateTimeOffset>(50, 4);
+            listbox.Multiselect = true;
+            listbox.Autoselect = false;
             listbox.Width = 50;
             listbox.Height = 15;
 
@@ -47,6 +49,18 @@ namespace Cuit.Sample
             {
                 listbox.Items.Add(new ListItem<DateTimeOffset>(DateTimeOffset.Now.AddDays(i)));
             });
+
+            listbox.SelectionChanged += (s, v) =>
+            {
+                if (v == null)
+                {
+                    label2.Text = "And a listbox below me";
+                }
+                else
+                {
+                    label2.Text = v.Value.ToString();
+                }
+            };
 
             Controls.Add(listbox);
         }
