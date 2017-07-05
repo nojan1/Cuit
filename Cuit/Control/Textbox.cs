@@ -68,9 +68,12 @@ namespace Cuit.Control
             var stringToDraw = _lastRenderTextLength > _stringBuilder.Length ? Text + string.Concat(Enumerable.Repeat(' ', _lastRenderTextLength - _stringBuilder.Length))
                                                                              : Text;
 
-            if(_scrollOffset > 0)
+            if(stringToDraw.Length > _width - 2 + _scrollOffset + 1) { 
+                stringToDraw = stringToDraw.Substring(_scrollOffset + 1, _width - 2);
+            }
+            else if(_scrollOffset > 0)
             {
-                stringToDraw = stringToDraw.Substring(_scrollOffset);
+                stringToDraw = stringToDraw.Substring(_scrollOffset + 1);
             }
 
             buffer.DrawString(Left + 1, Top + 1, stringToDraw, ConsoleColor.White, ConsoleColor.Black);
@@ -140,7 +143,7 @@ namespace Cuit.Control
                 {
                     if (_cursorPosition >= maxLength)
                     {
-                        _scrollOffset = Math.Max(0, _cursorPosition - maxLength + 1);
+                        _scrollOffset = Math.Max(0, _cursorPosition - maxLength);
                     }
                     else
                     {
