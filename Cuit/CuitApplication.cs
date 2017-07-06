@@ -70,7 +70,7 @@ namespace Cuit
             instance.Application = this;
 
             var formScreen = instance as FormScreen;
-            if(formScreen != null)
+            if (formScreen != null)
             {
                 formScreen.InstantiateComponents();
             }
@@ -87,7 +87,7 @@ namespace Cuit
             Loop();
         }
 
-        public void Run<T>(T screen) where T: IScreen
+        public void Run<T>(T screen) where T : IScreen
         {
             screen.Application = this;
             _screens.Push(screen);
@@ -106,7 +106,8 @@ namespace Cuit
 
         private void Loop()
         {
-            Task.Run(async () => {
+            Task.Run(async () =>
+            {
                 while (!Quit)
                 {
                     if (_fullRedrawPending)
@@ -145,8 +146,12 @@ namespace Cuit
             var backgroundColor = Console.BackgroundColor;
             var foregroundColor = Console.ForegroundColor;
 
-            foreach(var changedCharacter in screenbuffer.GetChangedCharacters(true))
+            foreach (var changedCharacter in screenbuffer.GetChangedCharacters(true))
             {
+                if (changedCharacter.Left < 0 || changedCharacter.Left > Console.BufferWidth || 
+                    changedCharacter.Top < 0 || changedCharacter.Top > Console.BufferHeight)
+                    continue;
+
                 Console.BackgroundColor = changedCharacter.Background;
                 Console.ForegroundColor = changedCharacter.Foreground;
                 Console.SetCursorPosition(changedCharacter.Left, changedCharacter.Top);
@@ -161,7 +166,7 @@ namespace Cuit
         private void RaiseLoadedEventIfApplicable(IScreen screen)
         {
             var loaded = screen as ILoaded;
-            if(loaded != null)
+            if (loaded != null)
             {
                 loaded.OnLoaded();
             }

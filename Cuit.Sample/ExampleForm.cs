@@ -107,4 +107,21 @@ namespace Cuit.Sample
             Controls.Add(checkbox);
         }
     }
+
+    public class NovelForm : FormScreen
+    {
+        public override void InstantiateComponents()
+        {
+            var label = new Label(5, 2);
+            label.IsMultiline = true;
+            label.Text = @"defghjdfghdfgdfgdfgdfg
+dflkgjdfklgjdfgdfgdf gdfklgjödf dfgd
+lkdfjglkdfjgvfdgdfgfdg fgdpgiädflg dfgdfg
+ödfjkgödflkgdfgdfgdf ghödfgjködfkg gfdgdfg
+ödfkgöldfkgödflgködflk";
+            label.Width = 10;
+
+            Controls.Add(label);
+        }
+    }
 }

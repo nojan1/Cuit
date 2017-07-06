@@ -9,14 +9,45 @@ namespace Cuit.Control
     public class Label : ControlBase
     {
 
-        public override int Height => 1;
-        public override int Width => Text.Length;
+        public override int Height => GetLines().Length;
+
+        private int _width = -1;
+        public override int Width
+        {
+            get
+            {
+                return _width == -1 ? GetLines().OrderByDescending(l => l.Length).FirstOrDefault()?.Length ?? 0
+                                    : _width;
+            }
+            set
+            {
+                _width = value;
+                IsDirty = true;
+            }
+        }
 
         public ConsoleColor Foreground { get; set; } = Screenbuffer.DEFAULT_FOREGROUND;
         public ConsoleColor Background { get; set; } = Screenbuffer.DEFAULT_BACKGROUND;
+        public bool IsMultiline { get; set; }
 
         private string _text = "";
-        public string Text { get { return _text; } set { _text = value; IsDirty = true; } }
+        public string Text
+        {
+            get { return _text; }
+            set
+            {
+                if (IsMultiline)
+                {
+                    _text = value;
+                }
+                else
+                {
+                    _text = value.Replace(Environment.NewLine, "");
+                }
+
+                IsDirty = true;
+            }
+        }
 
         private int _lastRenderLength = 0;
 
@@ -29,20 +60,46 @@ namespace Cuit.Control
 
         public override void Draw(Screenbuffer buffer)
         {
-            var stringToDraw = Text;
-            if(Text.Length < _lastRenderLength)
+            var lines = GetLines();
+
+            for (int i = 0; i < lines.Length; i++)
             {
-                stringToDraw = stringToDraw + string.Concat(Enumerable.Repeat(' ', _lastRenderLength - Text.Length));
+                var stringToDraw = lines[i];
+                if (lines[i].Length < _lastRenderLength)
+                {
+                    stringToDraw = stringToDraw + string.Concat(Enumerable.Repeat(' ', _lastRenderLength - Text.Length));
+                }
+
+                buffer.DrawString(Left, Top + i, stringToDraw, Foreground, Background);
             }
 
-            buffer.DrawString(Left, Top, stringToDraw, Foreground, Background);
-
-            _lastRenderLength = Text.Length;
+            _lastRenderLength = lines.OrderByDescending(l => l.Length).FirstOrDefault()?.Length ?? 0;
         }
 
         public override void HandleKeypress(ConsoleKeyInfo key)
         {
             //Nope
+        }
+
+        private string[] GetLines()
+        {
+            var lines = _text.Split(new string[] { Environment.NewLine }, StringSplitOptions.None).ToList();
+
+            if (_width != -1)
+            {
+                for (int i = 0; i < lines.Count; i++)
+                {
+                    while (lines[i].Length > _width)
+                    {
+                        var fullLine = lines[i];
+
+                        lines[i] = fullLine.Substring(0, _width);
+                        lines.Insert(i+1, fullLine.Substring(_width));
+                    }
+                }
+            }
+
+            return lines.ToArray();
         }
     }
 }

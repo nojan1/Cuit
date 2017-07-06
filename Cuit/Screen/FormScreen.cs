@@ -101,18 +101,23 @@ namespace Cuit.Screen
 
         private bool KeepCycling(int previousTabIndex)
         {
+            if(_tabIndex == previousTabIndex)
+            {
+                return false;
+            }
+
+            if (!Controls[_tabIndex].IsVisible)
+            {
+                return true;
+            }
+
             var focusable = Controls[_tabIndex] as IFocusable;
             if (focusable == null)
             {
                 return true;
             }
 
-            if (focusable.IsEnabled)
-            {
-                return false;
-            }
-
-            return _tabIndex != previousTabIndex;
+            return !focusable.IsEnabled;
         }
 
         private void HandleControlGotLostFocus(bool lostFocus)
