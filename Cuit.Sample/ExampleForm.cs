@@ -60,10 +60,17 @@ namespace Cuit.Sample
             button.Text = "Click me";
             button.Click += (s, e) =>
             {
-                //listbox.IsVisible = !listbox.IsVisible;
                 Application.SwitchTo<ExampleForm2>();
             };
             Controls.Add(button);
+
+            var starButton = new Button(20, 15);
+            starButton.Text = "See stars";
+            starButton.Click += (s, e) =>
+            {
+                Application.SwitchTo<Starfield>();
+            };
+            Controls.Add(starButton);
         }
     }
 
@@ -108,20 +115,4 @@ namespace Cuit.Sample
         }
     }
 
-    public class NovelForm : FormScreen
-    {
-        public override void InstantiateComponents()
-        {
-            var label = new Label(5, 2);
-            label.IsMultiline = true;
-            label.Text = @"defghjdfghdfgdfgdfgdfg
-dflkgjdfklgjdfgdfgdf gdfklgjödf dfgd
-lkdfjglkdfjgvfdgdfgfdg fgdpgiädflg dfgdfg
-ödfjkgödflkgdfgdfgdf ghödfgjködfkg gfdgdfg
-ödfkgöldfkgödflgködflk";
-            label.Width = 10;
-
-            Controls.Add(label);
-        }
-    }
 }
