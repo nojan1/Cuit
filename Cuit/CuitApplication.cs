@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Cuit.Control.Behaviors;
+using System.Threading.Tasks;
 
 namespace Cuit
 {
@@ -11,6 +12,7 @@ namespace Cuit
     {
         private bool _fullRedrawPending = true;
 
+        public int EventLoopIdleTime { get; set; } = 50;
         public bool Quit { get; set; }
 
         private Screenbuffer _buffer;
@@ -104,26 +106,36 @@ namespace Cuit
 
         private void Loop()
         {
-            while (!Quit)
-            {
-                if (_fullRedrawPending)
+            Task.Run(async () => {
+                while (!Quit)
                 {
-                    _fullRedrawPending = false;
-                    Console.Clear();
-                    Screenbuffer.Invalidate();
+                    if (_fullRedrawPending)
+                    {
+                        _fullRedrawPending = false;
+                        Console.Clear();
+                        Screenbuffer.Invalidate();
 
-                    ActiveScreen.Update(Screenbuffer, true);
+                        ActiveScreen.Update(Screenbuffer, true);
+                    }
+                    else
+                    {
+                        ActiveScreen.Update(Screenbuffer, false);
+                    }
+
+                    Render(Screenbuffer);
+
+                    if (Console.KeyAvailable)
+                    {
+                        var key = Console.ReadKey(true);
+                        ActiveScreen.HandleKeypress(key);
+                    }
+                    else
+                    {
+                        await Task.Delay(EventLoopIdleTime);
+                    }
+
                 }
-                else
-                {
-                    ActiveScreen.Update(Screenbuffer, false);
-                }
-
-                Render(Screenbuffer);
-
-                var key = Console.ReadKey(true);
-                ActiveScreen.HandleKeypress(key);
-            }
+            }).Wait();
         }
 
         private void Render(Screenbuffer screenbuffer)
