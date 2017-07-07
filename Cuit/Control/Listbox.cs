@@ -176,6 +176,7 @@ namespace Cuit.Control
             if(Autoselect && !Multiselect && Items.Any() && !_selected.Any())
             {
                 _selected.Add(Items[0]);
+                SelectionChanged(this, Items[0]);
             }
 
             _displayMarker = true;

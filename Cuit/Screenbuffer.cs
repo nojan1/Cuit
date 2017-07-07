@@ -21,7 +21,7 @@ namespace Cuit
         public const ConsoleColor DEFAULT_BACKGROUND = ConsoleColor.Black;
 
         private readonly Dictionary<(int left, int top), BufferCharacter> _buffer = new Dictionary<(int left, int top), BufferCharacter>();
-
+        
         public char this[int left, int top]
         {
             get

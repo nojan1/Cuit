@@ -58,7 +58,7 @@ namespace Cuit.Screen
             }
         }
 
-        public void OnLoaded()
+        public virtual void OnLoaded()
         {
             Loaded(this, new EventArgs());
 

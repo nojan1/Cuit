@@ -9,7 +9,7 @@ namespace Cuit.Sample
         static void Main(string[] args)
         {
             var application = new CuitApplication();
-            application.Run<ExampleForm>();
+            application.Run<ExampleXmlForm>();
         }
     }
 }

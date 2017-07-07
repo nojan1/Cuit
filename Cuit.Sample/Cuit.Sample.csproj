@@ -9,4 +9,10 @@
     <ProjectReference Include="..\Cuit\Cuit.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="ExampleXMLForm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -85,8 +85,22 @@ namespace Cuit.Sample
             var label2 = new Label(30, 2);
             Controls.Add(label2);
 
+            var progressBar = new Progressbar(20, 9);
+            progressBar.Maximum = 1;
+            progressBar.Width = 40;
+            Controls.Add(progressBar);
+
             var numericUpDown = new NumericUpDown(30, 5);
             numericUpDown.ValueChanged += (s, v) => label2.Text = v.ToString();
+            numericUpDown.ValueChanged += (s, v) =>
+            {
+                if(progressBar.Maximum < v)
+                {
+                    progressBar.Maximum =(int)v;
+                }
+
+                progressBar.Value = (int)v;
+            };
             Controls.Add(numericUpDown);
 
             var button = new Button(5, 5);
@@ -96,10 +110,6 @@ namespace Cuit.Sample
                 Application.GoBack();
             };
             Controls.Add(button);
-
-            var progressBar = new Progressbar(20, 9);
-            progressBar.Width = 40;
-            Controls.Add(progressBar);
 
             var button2 = new Button(5, 9);
             button2.Text = "Increment";
