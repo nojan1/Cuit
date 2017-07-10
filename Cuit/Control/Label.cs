@@ -52,11 +52,8 @@ namespace Cuit.Control
         private int _lastRenderLength = 0;
 
         public Label(int left, int top)
-        {
-            Top = top;
-            Left = left;
-            IsDirty = true;
-        }
+            : base(left, top)
+        { }
 
         public override void Draw(Screenbuffer buffer)
         {
@@ -74,11 +71,6 @@ namespace Cuit.Control
             }
 
             _lastRenderLength = lines.OrderByDescending(l => l.Length).FirstOrDefault()?.Length ?? 0;
-        }
-
-        public override void HandleKeypress(ConsoleKeyInfo key)
-        {
-            //Nope
         }
 
         private string[] GetLines()

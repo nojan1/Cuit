@@ -64,13 +64,21 @@ namespace Cuit.Sample
             };
             Controls.Add(button);
 
-            var starButton = new Button(20, 15);
+            var starButton = new Button(18, 15);
             starButton.Text = "See stars";
             starButton.Click += (s, e) =>
             {
                 Application.SwitchTo<Starfield>();
             };
             Controls.Add(starButton);
+
+            var xmlFormButton = new Button(32, 15);
+            xmlFormButton.Text = "Load from xml";
+            xmlFormButton.Click += (s, e) =>
+            {
+                Application.SwitchTo<ExampleXmlForm>();
+            };
+            Controls.Add(xmlFormButton);
         }
     }
 

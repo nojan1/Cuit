@@ -27,7 +27,7 @@ namespace Cuit.Screen
 
         public virtual void InstantiateComponents() { }
 
-        public void HandleKeypress(ConsoleKeyInfo key)
+        public virtual void HandleKeypress(ConsoleKeyInfo key)
         {
             if (key.Key == ConsoleKey.Tab)
             {

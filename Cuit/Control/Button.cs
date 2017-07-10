@@ -20,11 +20,8 @@ namespace Cuit.Control
         public event EventHandler LostFocus = delegate { };
 
         public Button(int left, int top)
-        {
-            Top = top;
-            Left = left;
-            IsDirty = true;
-        }
+            : base(left, top)
+        { }
 
         public override void Draw(Screenbuffer buffer)
         {

@@ -11,10 +11,19 @@ namespace Cuit.Sample
     {
         private Button btn => this["TestButton"];
 
-        public ExampleXmlForm() 
+        public ExampleXmlForm()
             : base("ExampleXMLForm.xml")
+        { }
+
+        public override void HandleKeypress(ConsoleKeyInfo key)
         {
-           
+            if(key.Key == ConsoleKey.Escape)
+            {
+                Application.GoBack();
+                return;
+            }
+
+            base.HandleKeypress(key);
         }
 
         public override void OnLoaded()
@@ -23,6 +32,7 @@ namespace Cuit.Sample
 
             btn.Text = "Helly";
             btn.IsDirty = true;
+            btn.Click += (s, e) => Application.GoBack();
         }
     }
 }

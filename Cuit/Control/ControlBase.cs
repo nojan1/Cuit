@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Cuit.Control
 {
-    public abstract class ControlBase : IControl
+    public class ControlBase : IControl
     {
         private bool _isVisible = true;
         public bool IsVisible
@@ -28,10 +28,22 @@ namespace Cuit.Control
 
         public virtual int Height { get; set; }
 
-        public bool IsDirty { get; set; }
+        public bool IsDirty { get; set; } = true;
 
-        public abstract void Draw(Screenbuffer buffer);
+        public ControlBase(int left, int top)
+        {
+            Left = left;
+            Top = top;
+        }
 
-        public abstract void HandleKeypress(ConsoleKeyInfo key);
+        public virtual void Draw(Screenbuffer buffer)
+        {
+
+        }
+
+        public virtual void HandleKeypress(ConsoleKeyInfo key)
+        {
+
+        }
     }
 }

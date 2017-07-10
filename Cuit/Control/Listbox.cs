@@ -11,7 +11,7 @@ namespace Cuit.Control
     public class Listbox<T> : ControlBase, IFocusable, ISelectable<T>
     {
         public bool IsEnabled { get; set; } = true;
-      
+
         private int _width = -1;
         public override int Width
         {
@@ -59,17 +59,14 @@ namespace Cuit.Control
         private int _lastRenderHeight = 0;
 
         public Listbox(int left, int top)
+            : base(left, top)
         {
-            Top = top;
-            Left = left;
-            IsDirty = true;
-
             Items.CollectionChanged += Items_CollectionChanged;
         }
 
         private void Items_CollectionChanged(object sender, EventArgs e)
         {
-            if(_markerPosition > Items.Count - 1)
+            if (_markerPosition > Items.Count - 1)
             {
                 _markerPosition = Math.Max(0, Items.Count - 1);
                 _rowOffset = 0;
@@ -135,12 +132,13 @@ namespace Cuit.Control
                 if (_markerPosition < 0)
                 {
                     _markerPosition = Items.Count - 1;
-                }else if(_markerPosition > Items.Count - 1)
+                }
+                else if (_markerPosition > Items.Count - 1)
                 {
                     _markerPosition = 0;
                 }
 
-                if(Autoselect && !Multiselect)
+                if (Autoselect && !Multiselect)
                 {
                     _selected.Clear();
                     _selected.Add(Items[_markerPosition]);
@@ -173,7 +171,7 @@ namespace Cuit.Control
 
         public void OnGotFocus()
         {
-            if(Autoselect && !Multiselect && Items.Any() && !_selected.Any())
+            if (Autoselect && !Multiselect && Items.Any() && !_selected.Any())
             {
                 _selected.Add(Items[0]);
                 SelectionChanged(this, Items[0]);

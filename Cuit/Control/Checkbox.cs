@@ -28,11 +28,8 @@ namespace Cuit.Control
         public event EventHandler<bool> ValueChanged = delegate { };
 
         public Checkbox(int left, int top)
-        {
-            Top = top;
-            Left = left;
-            IsDirty = true;
-        }
+            : base(left, top)
+        { }
 
         public override void Draw(Screenbuffer buffer)
         {

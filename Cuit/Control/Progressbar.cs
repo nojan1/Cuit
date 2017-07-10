@@ -40,11 +40,8 @@ namespace Cuit.Control
         }
 
         public Progressbar(int left, int top)
-        {
-            Top = top;
-            Left = left;
-            IsDirty = true;
-        }
+            : base(left, top)
+        { }
 
         public override void Draw(Screenbuffer buffer)
         {
@@ -67,11 +64,6 @@ namespace Cuit.Control
             var percentageString = $"{Value}%";
             var percentageStringLeft = Left + 1 + ((Width - 2) / 2) - (percentageString.Length / 2);
             buffer.DrawString(percentageStringLeft, Top + 1, percentageString, ConsoleColor.White, ConsoleColor.DarkBlue);
-        }
-
-        public override void HandleKeypress(ConsoleKeyInfo key)
-        {
-            //Noop
         }
     }
 }
