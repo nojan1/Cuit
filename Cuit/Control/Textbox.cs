@@ -12,7 +12,7 @@ namespace Cuit.Control
         private const int TEXT_MIN_WIDTH = 30;
 
         public bool IsEnabled { get; set; } = true;
-   
+
         private int _width = -1;
         public override int Width
         {
@@ -38,8 +38,17 @@ namespace Cuit.Control
             set
             {
                 _stringBuilder = new StringBuilder(value);
-                _cursorPosition = _stringBuilder.Length - 1;
 
+                if (value.Length > 0)
+                {
+                    _cursorPosition = _stringBuilder.Length - 1;
+                }
+                else
+                {
+                    _cursorPosition = 0;
+                }
+
+                SyncScrollOffset();
                 IsDirty = true;
             }
         }
@@ -63,10 +72,11 @@ namespace Cuit.Control
             var stringToDraw = _lastRenderTextLength > _stringBuilder.Length ? Text + string.Concat(Enumerable.Repeat(' ', _lastRenderTextLength - _stringBuilder.Length))
                                                                              : Text;
 
-            if(stringToDraw.Length > _width - 2 + _scrollOffset + 1) { 
+            if (stringToDraw.Length > _width - 2 + _scrollOffset + 1)
+            {
                 stringToDraw = stringToDraw.Substring(_scrollOffset + 1, _width - 2);
             }
-            else if(_scrollOffset > 0)
+            else if (_scrollOffset > 0)
             {
                 stringToDraw = stringToDraw.Substring(_scrollOffset + 1);
             }
@@ -112,7 +122,7 @@ namespace Cuit.Control
 
         public void OnGotFocus()
         {
-            Console.SetCursorPosition(Left + 1 + _cursorPosition - _scrollOffset, Top + 1);
+            SyncScrollOffset();
             Console.CursorVisible = true;
 
             GotFocus(this, new EventArgs());
@@ -127,14 +137,14 @@ namespace Cuit.Control
 
         private void SyncScrollOffset()
         {
-            if(_width == -1)
+            if (_width == -1)
             {
                 _scrollOffset = 0;
             }
             else
             {
                 var maxLength = _width - 2;
-                if(_stringBuilder.Length > maxLength)
+                if (_stringBuilder.Length > maxLength)
                 {
                     if (_cursorPosition >= maxLength)
                     {
@@ -150,6 +160,8 @@ namespace Cuit.Control
                     _scrollOffset = 0;
                 }
             }
+
+            Console.SetCursorPosition(Left + 1 + _cursorPosition - _scrollOffset, Top + 1);
         }
     }
 }

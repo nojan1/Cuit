@@ -4,7 +4,8 @@
          Top="2"
          Text="{{GotoPhrase}}"
          Foreground="Yellow"
-         Background="DarkBlue" />
+         Background="DarkBlue"
+         Name="label"/>
 
   <Button Name="TestButton"
           Left="5"

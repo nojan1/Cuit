@@ -10,6 +10,7 @@ namespace Cuit.Sample
     class ExampleXmlForm : FormScreenXml
     {
         private Button btn => this["TestButton"];
+        private Label lbl => this["label"];
 
         public ExampleXmlForm()
             : base("ExampleXMLForm.xml")
@@ -33,6 +34,9 @@ namespace Cuit.Sample
             btn.Text = "Helly";
             btn.IsDirty = true;
             btn.Click += (s, e) => Application.GoBack();
+
+            lbl.IsMultiline = true;
+            lbl.Text = $"hejh{Environment.NewLine}kjsdhfklsdjfhs";
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Cuit.Control
 {
-    public class Listbox<T> : ControlBase, IFocusable, ISelectable<T>
+    public class Listbox<T> : ControlBase, IFocusable, ISelectable<T>, IPreviewable<T>
     {
         public bool IsEnabled { get; set; } = true;
 
@@ -52,6 +52,7 @@ namespace Cuit.Control
         public event EventHandler GotFocus = delegate { };
         public event EventHandler LostFocus = delegate { };
         public event EventHandler<T> SelectionChanged = delegate { };
+        public event EventHandler<T> PreviewChanged = delegate { };
 
         private bool _displayMarker = false;
         private int _markerPosition = 0;
@@ -142,11 +143,12 @@ namespace Cuit.Control
                 {
                     _selected.Clear();
                     _selected.Add(Items[_markerPosition]);
-
+                    
                     SelectionChanged(this, Items[_markerPosition]);
                 }
 
                 SyncRowOffset();
+                PreviewChanged(this, Items[_markerPosition]);
             }
             else if (key.Key == ConsoleKey.Spacebar && !Autoselect)
             {
@@ -191,6 +193,11 @@ namespace Cuit.Control
             LostFocus(this, new EventArgs());
         }
 
+        public void ClearSelection()
+        {
+            _selected.Clear();
+        }
+
         private string FixItemStringLength(string str)
         {
             if (_width != -1 && str.Length > _width - 3)
@@ -230,5 +237,6 @@ namespace Cuit.Control
                 }
             }
         }
+
     }
 }

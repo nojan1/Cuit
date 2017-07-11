@@ -8,5 +8,6 @@ namespace Cuit.Control.Behaviors
     {
         event EventHandler<T> SelectionChanged;
         IEnumerable<T> Selected { get; }
+        void ClearSelection();
     }
 }

@@ -30,6 +30,9 @@ namespace Cuit
         private readonly Stack<IScreen> _screens = new Stack<IScreen>();
         public IScreen ActiveScreen => _screens.Peek();
 
+        public int Width => Console.BufferWidth;
+        public int Height => Console.BufferHeight;
+
         public CuitApplication()
         {
             //Use default buffer size

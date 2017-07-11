@@ -64,7 +64,7 @@ namespace Cuit.Control
                 var stringToDraw = lines[i];
                 if (lines[i].Length < _lastRenderLength)
                 {
-                    stringToDraw = stringToDraw + string.Concat(Enumerable.Repeat(' ', _lastRenderLength - Text.Length));
+                    stringToDraw = stringToDraw + string.Concat(Enumerable.Repeat(' ', _lastRenderLength - lines[i].Length));
                 }
 
                 buffer.DrawString(Left, Top + i, stringToDraw, Foreground, Background);
