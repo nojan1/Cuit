@@ -6,6 +6,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
+using Cuit.Control.Behaviors;
 
 namespace Cuit.Screen
 {
@@ -50,6 +51,8 @@ namespace Cuit.Screen
         /// Use with caution
         /// </summary>
         protected dynamic DynamicSelf => (dynamic)this;
+
+        public bool IsEnabled { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public DynamicMetaObject GetMetaObject(Expression parameter)
         {

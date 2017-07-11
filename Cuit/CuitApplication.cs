@@ -57,9 +57,15 @@ namespace Cuit
 
         public T SwitchTo<T>(T screen) where T : IScreen
         {
+            if(_screens.Count > 0)
+            {
+                RaiseFocusEventIfApplicable(_screens.Peek(), false);
+            }
+
             _screens.Push(screen);
             _fullRedrawPending = true;
 
+            RaiseFocusEventIfApplicable(screen, true);
             RaiseLoadedEventIfApplicable(screen);
 
             return screen;
@@ -67,9 +73,17 @@ namespace Cuit
 
         public IScreen GoBack()
         {
-            _screens.Pop();
+            if(_screens.Count > 1)
+            {
+                RaiseFocusEventIfApplicable(_screens.Peek(), false);
+                _screens.Pop();
+            }
+
+            var newScreen = _screens.Peek(); ;
+            RaiseFocusEventIfApplicable(newScreen, true);
             _fullRedrawPending = true;
-            return _screens.Peek();
+
+            return newScreen;
         }
 
         public T InstantiateScreen<T>() where T : IScreen
@@ -181,5 +195,19 @@ namespace Cuit
                 loaded.OnLoaded();
             }
         }
+
+        private void RaiseFocusEventIfApplicable<T>(T screen, bool gotFocus)
+            where T : IScreen
+        {
+            var focusable = screen as IFocusable;
+            if(focusable != null)
+            {
+                if (gotFocus)
+                    focusable.OnGotFocus();
+                else
+                    focusable.OnLostFocus();
+            }
+        }
+
     }
 }

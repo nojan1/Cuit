@@ -143,7 +143,7 @@ namespace Cuit.Control
                 {
                     _selected.Clear();
                     _selected.Add(Items[_markerPosition]);
-                    
+
                     SelectionChanged(this, Items[_markerPosition]);
                 }
 
@@ -177,6 +177,11 @@ namespace Cuit.Control
             {
                 _selected.Add(Items[0]);
                 SelectionChanged(this, Items[0]);
+            }
+
+            if (Items.Any() && _markerPosition < Items.Count)
+            {
+                PreviewChanged(this, Items[_markerPosition]);
             }
 
             _displayMarker = true;
