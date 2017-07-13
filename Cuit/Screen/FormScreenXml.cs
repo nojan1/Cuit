@@ -52,8 +52,6 @@ namespace Cuit.Screen
         /// </summary>
         protected dynamic DynamicSelf => (dynamic)this;
 
-        public bool IsEnabled { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
         public DynamicMetaObject GetMetaObject(Expression parameter)
         {
             return new DelegatingMetaObject(_dynamicControlsObject, parameter, BindingRestrictions.GetTypeRestriction(parameter, this.GetType()), this);

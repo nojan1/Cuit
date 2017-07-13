@@ -8,11 +8,15 @@ using System.Text;
 
 namespace Cuit.Screen
 {
-    public class FormScreen : IScreen, ILoaded
+    public class FormScreen : IScreen, ILoaded, IFocusable
     {
-        private int _tabIndex = 0;
+        private bool _firstShow = true;
+
+        protected virtual int _tabIndex { get; set; } = 0;
 
         public event EventHandler Loaded = delegate { };
+        public event EventHandler GotFocus = delegate { };
+        public event EventHandler LostFocus = delegate { };
 
         public CuitApplication Application { get; set; }
         public List<IControl> Controls { get; private set; } = new List<IControl>();
@@ -24,6 +28,8 @@ namespace Cuit.Screen
                 return _tabIndex < Controls.Count ? Controls[_tabIndex] : null;
             }
         }
+
+        public bool IsEnabled { get; set; } = true;
 
         public virtual void InstantiateComponents() { }
 
@@ -68,7 +74,7 @@ namespace Cuit.Screen
             }
         }
 
-        private void DrawFocusMarker(bool clear)
+        protected virtual void DrawFocusMarker(bool clear)
         {
             int top = ActiveControl.Top - 1;
             int left = ActiveControl.Left - 1;
@@ -122,6 +128,9 @@ namespace Cuit.Screen
 
         private void HandleControlGotLostFocus(bool lostFocus)
         {
+            if (ActiveControl == null)
+                return;
+
             var focusableControl = ActiveControl as IFocusable;
             if (focusableControl != null)
             {
@@ -136,6 +145,25 @@ namespace Cuit.Screen
                     focusableControl.OnGotFocus();
                 }
             }
+        }
+
+        public virtual void OnGotFocus()
+        {
+            GotFocus(this, new EventArgs());
+
+            if (_firstShow) {
+                CycleControl(1);
+                HandleControlGotLostFocus(false);
+
+                _firstShow = false;
+            }
+        }
+
+        public virtual void OnLostFocus()
+        {
+            LostFocus(this, new EventArgs());
+
+            HandleControlGotLostFocus(true);
         }
     }
 }

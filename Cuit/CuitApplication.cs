@@ -11,6 +11,7 @@ namespace Cuit
     public class CuitApplication
     {
         private bool _fullRedrawPending = true;
+        private bool _gotFocusEventRaised = false;
 
         public int EventLoopIdleTime { get; set; } = 50;
         public bool Quit { get; set; }
@@ -57,15 +58,15 @@ namespace Cuit
 
         public T SwitchTo<T>(T screen) where T : IScreen
         {
-            if(_screens.Count > 0)
+            if (_screens.Count > 0)
             {
-                RaiseFocusEventIfApplicable(_screens.Peek(), false);
+                RaiseFocusEventIfApplicable(ActiveScreen, false);
             }
 
             _screens.Push(screen);
             _fullRedrawPending = true;
+            _gotFocusEventRaised = false;
 
-            RaiseFocusEventIfApplicable(screen, true);
             RaiseLoadedEventIfApplicable(screen);
 
             return screen;
@@ -73,17 +74,16 @@ namespace Cuit
 
         public IScreen GoBack()
         {
-            if(_screens.Count > 1)
+            if (_screens.Count > 1)
             {
-                RaiseFocusEventIfApplicable(_screens.Peek(), false);
+                RaiseFocusEventIfApplicable(ActiveScreen, false);
                 _screens.Pop();
             }
-
-            var newScreen = _screens.Peek(); ;
-            RaiseFocusEventIfApplicable(newScreen, true);
+;
             _fullRedrawPending = true;
+            _gotFocusEventRaised = false;
 
-            return newScreen;
+            return ActiveScreen;
         }
 
         public T InstantiateScreen<T>() where T : IScreen
@@ -102,11 +102,8 @@ namespace Cuit
 
         public void Run<T>() where T : IScreen
         {
-            _screens.Push(InstantiateScreen<T>());
-
-            RaiseLoadedEventIfApplicable(ActiveScreen);
-            SetupConsole();
-            Loop();
+            var screen = InstantiateScreen<T>();
+            Run(screen);
         }
 
         public void Run<T>(T screen) where T : IScreen
@@ -114,8 +111,9 @@ namespace Cuit
             screen.Application = this;
             _screens.Push(screen);
 
-            RaiseLoadedEventIfApplicable(screen);
             SetupConsole();
+            RaiseLoadedEventIfApplicable(screen);
+            _gotFocusEventRaised = false;
             Loop();
         }
 
@@ -140,10 +138,12 @@ namespace Cuit
                         Console.Clear();
                         Screenbuffer.Invalidate();
 
+                        RaiseFocusEventIfApplicable(ActiveScreen, true);
                         ActiveScreen.Update(Screenbuffer, true);
                     }
                     else
                     {
+                        RaiseFocusEventIfApplicable(ActiveScreen, true);
                         ActiveScreen.Update(Screenbuffer, false);
                     }
 
@@ -169,6 +169,9 @@ namespace Cuit
             int cursorLeft = Console.CursorLeft;
             var backgroundColor = Console.BackgroundColor;
             var foregroundColor = Console.ForegroundColor;
+            var cursorVisible = Console.CursorVisible;
+
+            Console.CursorVisible = false;
 
             foreach (var changedCharacter in screenbuffer.GetChangedCharacters(true))
             {
@@ -185,6 +188,7 @@ namespace Cuit
             Console.BackgroundColor = backgroundColor;
             Console.ForegroundColor = foregroundColor;
             Console.SetCursorPosition(cursorLeft, cursorTop);
+            Console.CursorVisible = cursorVisible;
         }
 
         private void RaiseLoadedEventIfApplicable(IScreen screen)
@@ -200,12 +204,19 @@ namespace Cuit
             where T : IScreen
         {
             var focusable = screen as IFocusable;
-            if(focusable != null)
+            if (focusable != null)
             {
                 if (gotFocus)
-                    focusable.OnGotFocus();
+                {
+                    if (!_gotFocusEventRaised) { 
+                        focusable.OnGotFocus();
+                        _gotFocusEventRaised = true;
+                    }
+                }
                 else
+                {
                     focusable.OnLostFocus();
+                }
             }
         }
 

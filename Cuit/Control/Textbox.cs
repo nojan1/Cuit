@@ -72,9 +72,9 @@ namespace Cuit.Control
             var stringToDraw = _lastRenderTextLength > _stringBuilder.Length ? Text + string.Concat(Enumerable.Repeat(' ', _lastRenderTextLength - _stringBuilder.Length))
                                                                              : Text;
 
-            if (stringToDraw.Length > _width - 2 + _scrollOffset + 1)
+            if (stringToDraw.Length > Width - 2 + _scrollOffset + 1)
             {
-                stringToDraw = stringToDraw.Substring(_scrollOffset + 1, _width - 2);
+                stringToDraw = stringToDraw.Substring(_scrollOffset + 1, Width - 2);
             }
             else if (_scrollOffset > 0)
             {
