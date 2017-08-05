@@ -41,6 +41,11 @@ namespace Cuit
             Console.BufferWidth = width;
         }
 
+        public CuitApplication(int width)
+        {
+            Console.BufferWidth = width;
+        }
+
         public T SwitchTo<T>() where T : IScreen
         {
             var screen = InstantiateScreen<T>();
@@ -102,6 +107,8 @@ namespace Cuit
             Console.TreatControlCAsInput = true;
             Console.OutputEncoding = Encoding.Unicode;
             Console.CursorVisible = false;
+            
+            Console.WindowWidth = Console.BufferWidth;
         }
 
         private void Loop()
@@ -148,8 +155,8 @@ namespace Cuit
 
             foreach (var changedCharacter in screenbuffer.GetChangedCharacters(true))
             {
-                if (changedCharacter.Left < 0 || changedCharacter.Left > Console.BufferWidth || 
-                    changedCharacter.Top < 0 || changedCharacter.Top > Console.BufferHeight)
+                if (changedCharacter.Left < 0 || changedCharacter.Left >= Console.BufferWidth || 
+                    changedCharacter.Top < 0 || changedCharacter.Top >= Console.BufferHeight)
                     continue;
 
                 Console.BackgroundColor = changedCharacter.Background;

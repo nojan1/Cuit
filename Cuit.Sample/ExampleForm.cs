@@ -122,6 +122,17 @@ namespace Cuit.Sample
             var checkbox = new Checkbox(5, 13);
             checkbox.Text = "Check me to be awesome";
             Controls.Add(checkbox);
+
+            var image = new Image(5, 16);
+            image.Border = Helpers.RectangleDrawStyle.Single;
+            image.BorderColor = ConsoleColor.Yellow;
+            image.SetImageFromContent(
+@" /--------\ 
+ |        | 
+ |        | 
+ \--------/ ",
+                ConsoleColor.Blue);
+            Controls.Add(image);
         }
     }
 
