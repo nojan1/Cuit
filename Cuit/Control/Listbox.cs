@@ -198,9 +198,24 @@ namespace Cuit.Control
             LostFocus(this, new EventArgs());
         }
 
+        public void SetSelection(T item, bool isSelected)
+        {
+            if (_selected.Contains(item) && !isSelected)
+            {
+                _selected.Remove(item);
+            }
+            else if (!_selected.Contains(item) && isSelected)
+            {
+                _selected.Add(item);
+            }
+
+            IsDirty = true;
+        }
+
         public void ClearSelection()
         {
             _selected.Clear();
+            IsDirty = true;
         }
 
         private string FixItemStringLength(string str)

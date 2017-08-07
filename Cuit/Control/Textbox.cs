@@ -100,7 +100,7 @@ namespace Cuit.Control
             }
             else if (key.Key == ConsoleKey.Backspace)
             {
-                if (_stringBuilder.Length > 0)
+                if (_cursorPosition > 0)
                 {
                     _stringBuilder.Remove(_cursorPosition - 1, 1);
 

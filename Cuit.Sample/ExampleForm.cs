@@ -135,11 +135,24 @@ namespace Cuit.Sample
             image.Border = Helpers.RectangleDrawStyle.Single;
             image.BorderColor = ConsoleColor.Yellow;
             image.SetImageFromContent(
-@" /--------\ 
- |        | 
- |        | 
- \--------/ ",
-                ConsoleColor.Blue);
+@"${c1}                    ..
+                  .oK0l
+                 :0KKKKd.
+               .xKO0KKKKd
+              ,Od' .d0000l
+             .c;.   .'''...           ..'.
+.,:cloddxxxkkkkOOOOkkkkkkkkxxxxxxxxxkkkx:
+;kOOOOOOOkxOkc'...',;;;;,,,'',;;:cllc:,.
+ .okkkkd,.lko  .......',;:cllc:;,,'''''.
+   .cdo. :xd' cd:.  ..';'',,,'',,;;;,'.
+      . .ddl.;doooc'..;oc;'..';::;,'.
+        coo;.oooolllllllcccc:'.  .
+       .ool''lllllccccccc:::::;.
+       ;lll. .':cccc:::::::;;;;'
+       :lcc:'',..';::::;;;;;;;,,.
+       :cccc::::;...';;;;;,,,,,,.
+       ,::::::;;;,'.  ..',,,,'''.
+        ........          ......");
             Controls.Add(image);
         }
     }
