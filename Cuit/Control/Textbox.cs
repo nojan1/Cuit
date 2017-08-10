@@ -55,7 +55,6 @@ namespace Cuit.Control
 
         private StringBuilder _stringBuilder = new StringBuilder();
         private int _cursorPosition = 0;
-        private int _lastRenderTextLength = 0;
         private int _scrollOffset = 0;
 
         public event EventHandler GotFocus = delegate { };
@@ -67,10 +66,11 @@ namespace Cuit.Control
 
         public override void Draw(Screenbuffer buffer)
         {
+            buffer.StartTrackingForObject(this);
+
             buffer.DrawRectangle(RectangleDrawStyle.ShadedSingle, Left, Top, Width, Height);
 
-            var stringToDraw = _lastRenderTextLength > _stringBuilder.Length ? Text + string.Concat(Enumerable.Repeat(' ', _lastRenderTextLength - _stringBuilder.Length))
-                                                                             : Text;
+            var stringToDraw = Text;
 
             if (stringToDraw.Length > Width - 2 + _scrollOffset + 1)
             {
@@ -83,7 +83,7 @@ namespace Cuit.Control
 
             buffer.DrawString(Left + 1, Top + 1, stringToDraw, ConsoleColor.White, ConsoleColor.Black);
 
-            _lastRenderTextLength = _stringBuilder.Length;
+            buffer.CommitTrackingData();
         }
 
         public override void HandleKeypress(ConsoleKeyInfo key)

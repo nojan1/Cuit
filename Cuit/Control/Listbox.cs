@@ -57,7 +57,6 @@ namespace Cuit.Control
         private bool _displayMarker = false;
         private int _markerPosition = 0;
         private int _rowOffset = 0;
-        private int _lastRenderHeight = 0;
 
         public Listbox(int left, int top)
             : base(left, top)
@@ -80,20 +79,20 @@ namespace Cuit.Control
 
         public override void Draw(Screenbuffer buffer)
         {
-            if (_lastRenderHeight == 0 || (_height == -1 && _lastRenderHeight < Items.Count || _height != -1 && _lastRenderHeight < _height - 2))
-            {
-                _lastRenderHeight = (_height == -1) ? Items.Count : _height - 2;
-            }
+            buffer.StartTrackingForObject(this);
 
-            for (int i = 0; i < _lastRenderHeight; i++)
+            int numToDisplay = _height == -1 ? Items.Count
+                                             : _height - 2;
+
+            for(int i = 0; i < numToDisplay; i++)
             {
                 if (i + _rowOffset <= Items.Count - 1)
                 {
                     buffer.DrawString(Left + 1,
-                                      Top + i + 1,
-                                      FixItemStringLength("  " + Items[i + _rowOffset].ToString()),
-                                      ConsoleColor.White,
-                                      _selected.Contains(Items[i + _rowOffset]) ? ConsoleColor.DarkGray : Screenbuffer.DEFAULT_BACKGROUND);
+                                  Top + i + 1,
+                                  FixItemStringLength("  " + Items[i + _rowOffset].ToString()),
+                                  ConsoleColor.White,
+                                  _selected.Contains(Items[i + _rowOffset]) ? ConsoleColor.DarkGray : Screenbuffer.DEFAULT_BACKGROUND);
 
                     if (_displayMarker && i + _rowOffset == _markerPosition)
                     {
@@ -106,11 +105,10 @@ namespace Cuit.Control
                 }
                 else
                 {
-                    buffer.DrawString(Left, Top + 1 + i, string.Concat(Enumerable.Repeat(' ', Width)));
+                    break;
                 }
             }
 
-            buffer.DrawString(Left, Top + _lastRenderHeight + 1, string.Concat(Enumerable.Repeat(' ', Width)));
             buffer.DrawRectangle(RectangleDrawStyle.ShadedSingle, Left, Top, Width, Height);
 
             if (_rowOffset > 0)
@@ -122,6 +120,8 @@ namespace Cuit.Control
             {
                 buffer.SetChar(Left + Width - 1, Top + Height - 2, 'v', ConsoleColor.DarkGray, Screenbuffer.DEFAULT_BACKGROUND);
             }
+
+            buffer.CommitTrackingData();
         }
 
         public override void HandleKeypress(ConsoleKeyInfo key)

@@ -21,8 +21,6 @@ namespace Cuit.Control
         private bool _checked;
         public bool Checked { get { return _checked; } set { _checked = value; IsDirty = true; } }
 
-        private int _lastRenderLength = 0;
-
         public event EventHandler GotFocus = delegate { };
         public event EventHandler LostFocus = delegate { };
         public event EventHandler<bool> ValueChanged = delegate { };
@@ -33,15 +31,12 @@ namespace Cuit.Control
 
         public override void Draw(Screenbuffer buffer)
         {
+            buffer.StartTrackingForObject(this);
+
             var stringToRender = $"{(Checked ? "[x]" : "[ ]")} {Text}";
-            if(stringToRender.Length < _lastRenderLength)
-            {
-                stringToRender += string.Concat(Enumerable.Repeat(' ', _lastRenderLength - stringToRender.Length));
-            }
-
-            _lastRenderLength = Width;
-
             buffer.DrawString(Left, Top, stringToRender);
+
+            buffer.CommitTrackingData();
         }
 
         public override void HandleKeypress(ConsoleKeyInfo key)

@@ -49,8 +49,6 @@ namespace Cuit.Control
             }
         }
 
-        private int _lastRenderLength = 0;
-
         public Label(int left, int top)
             : base(left, top)
         { }
@@ -59,18 +57,14 @@ namespace Cuit.Control
         {
             var lines = GetLines();
 
+            buffer.StartTrackingForObject(this);
+
             for (int i = 0; i < lines.Length; i++)
             {
-                var stringToDraw = lines[i];
-                if (lines[i].Length < _lastRenderLength)
-                {
-                    stringToDraw = stringToDraw + string.Concat(Enumerable.Repeat(' ', _lastRenderLength - lines[i].Length));
-                }
-
-                buffer.DrawString(Left, Top + i, stringToDraw, Foreground, Background);
+                buffer.DrawString(Left, Top + i, lines[i], Foreground, Background);
             }
 
-            _lastRenderLength = lines.OrderByDescending(l => l.Length).FirstOrDefault()?.Length ?? 0;
+            buffer.CommitTrackingData();
         }
 
         private string[] GetLines()

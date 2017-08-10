@@ -45,6 +45,8 @@ namespace Cuit.Control
 
         public override void Draw(Screenbuffer buffer)
         {
+            buffer.StartTrackingForObject(this);
+
             buffer.DrawRectangle(RectangleDrawStyle.Single, Left, Top, Width, Height);
 
             string progressString = "";
@@ -64,6 +66,8 @@ namespace Cuit.Control
             var percentageString = $"{Value}%";
             var percentageStringLeft = Left + 1 + ((Width - 2) / 2) - (percentageString.Length / 2);
             buffer.DrawString(percentageStringLeft, Top + 1, percentageString, ConsoleColor.White, ConsoleColor.DarkBlue);
+
+            buffer.CommitTrackingData();
         }
     }
 }

@@ -21,7 +21,11 @@ namespace Cuit
         public const ConsoleColor DEFAULT_BACKGROUND = ConsoleColor.Black;
 
         private readonly Dictionary<(int left, int top), BufferCharacter> _buffer = new Dictionary<(int left, int top), BufferCharacter>();
-        
+
+        private readonly Dictionary<object, List<(int left, int top)>> _previousChangesStore = new Dictionary<object, List<(int left, int top)>>();
+        private object _currentTrackedObject;
+        private readonly List<(int left, int top)> _changeTracking = new List<(int left, int top)>();
+
         public char this[int left, int top]
         {
             get
@@ -38,6 +42,8 @@ namespace Cuit
                     character.Foreground = DEFAULT_FOREGROUND;
                     character.Character = value;
                     character.IsDirty = true;
+
+                    MarkChanged(left, top);
                 }
             }
         }
@@ -50,6 +56,8 @@ namespace Cuit
             charObject.Background = backgroundColor;
             charObject.Foreground = foregroundColor;
             charObject.IsDirty = true;
+
+            MarkChanged(left, top);
         }
 
         public ICollection<BufferCharacter> GetChangedCharacters(bool clear)
@@ -62,6 +70,31 @@ namespace Cuit
             }
 
             return dirty;
+        }
+
+        public void StartTrackingForObject(object obj)
+        {
+            _changeTracking.Clear();
+            _currentTrackedObject = obj;
+        }
+
+        public void CommitTrackingData()
+        {
+            if (_previousChangesStore.ContainsKey(_currentTrackedObject))
+            {
+                //Blank out characters not touched by this render
+                foreach(var ghostCharacter in _previousChangesStore[_currentTrackedObject].Where(x => !_changeTracking.Contains(x)))
+                {
+                    var charObject = Get(ghostCharacter.left, ghostCharacter.top);
+                    charObject.Character = '\0';
+                    charObject.IsDirty = true;
+                }
+            }
+
+            _previousChangesStore[_currentTrackedObject] = new List<(int left, int top)>(_changeTracking);
+
+            _currentTrackedObject = null;
+            _changeTracking.Clear();
         }
 
         private BufferCharacter Get(int left, int top)
@@ -81,6 +114,14 @@ namespace Cuit
                 _buffer.Add((left, top), character);
 
                 return character;
+            }
+        }
+
+        private void MarkChanged(int left, int top)
+        {
+            if(_currentTrackedObject != null && !_changeTracking.Contains((left, top)))
+            {
+                _changeTracking.Add((left, top));
             }
         }
 

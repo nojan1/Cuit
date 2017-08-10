@@ -73,6 +73,8 @@ namespace Cuit.Control
         
         public override void Draw(Screenbuffer buffer)
         {
+            buffer.StartTrackingForObject(this);
+
             buffer.DrawFill('\0', Left, Top, Width, Height);
             buffer.DrawRectangle(_border, Left, Top, Width, Height, BorderColor);
 
@@ -84,6 +86,8 @@ namespace Cuit.Control
                                character.Foreground,
                                character.Background);
             }
+
+            buffer.CommitTrackingData();
         }
 
         private void LoadContent(string content, ConsoleColor? color)

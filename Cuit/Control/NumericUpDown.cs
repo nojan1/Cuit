@@ -43,6 +43,8 @@ namespace Cuit.Control
 
         public override void Draw(Screenbuffer buffer)
         {
+            buffer.StartTrackingForObject(this);
+
             buffer.DrawRectangle(RectangleDrawStyle.Double, Left, Top, Width, Height);
             buffer.DrawString(Left + 1, Top + 1, "^v");
 
@@ -50,6 +52,8 @@ namespace Cuit.Control
             valueString += string.Concat(Enumerable.Repeat(' ', Width - valueString.Length - 5));
 
             buffer.DrawString(Left + 4, Top + 1, valueString, ConsoleColor.White);
+
+            buffer.CommitTrackingData();
         }
 
         public override void HandleKeypress(ConsoleKeyInfo key)

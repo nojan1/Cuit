@@ -25,8 +25,12 @@ namespace Cuit.Control
 
         public override void Draw(Screenbuffer buffer)
         {
+            buffer.StartTrackingForObject(this);
+
             buffer.DrawRectangle(RectangleDrawStyle.Single, Left, Top, Width, Height);
             buffer.DrawString(Left + 1, Top + 1, Text);
+
+            buffer.CommitTrackingData();
         }
 
         public override void HandleKeypress(ConsoleKeyInfo key)
