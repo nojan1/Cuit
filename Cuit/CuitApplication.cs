@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using Cuit.Control.Behaviors;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Cuit
 {
@@ -122,7 +123,7 @@ namespace Cuit
             Console.TreatControlCAsInput = true;
             Console.OutputEncoding = Encoding.Unicode;
             Console.CursorVisible = false;
-            
+
             Console.WindowWidth = Console.BufferWidth;
         }
 
@@ -165,6 +166,7 @@ namespace Cuit
 
         private void Render(Screenbuffer screenbuffer)
         {
+            var writeGroupingBuffer = new StringBuilder();
             int cursorTop = Console.CursorTop;
             int cursorLeft = Console.CursorLeft;
             var backgroundColor = Console.BackgroundColor;
@@ -173,16 +175,40 @@ namespace Cuit
 
             Console.CursorVisible = false;
 
-            foreach (var changedCharacter in screenbuffer.GetChangedCharacters(true))
+            var changedCharacters = screenbuffer.GetChangedCharacters(true)
+                                                .OrderBy(c => c.Top)
+                                                .ThenBy(c => c.Left)
+                                                .ToList();
+
+            for(int i = 0; i < changedCharacters.Count; i++)
             {
-                if (changedCharacter.Left < 0 || changedCharacter.Left >= Console.BufferWidth || 
-                    changedCharacter.Top < 0 || changedCharacter.Top >= Console.BufferHeight)
+                if (changedCharacters[i].Left < 0 || changedCharacters[i].Left >= Console.BufferWidth ||
+                    changedCharacters[i].Top < 0 || changedCharacters[i].Top >= Console.BufferHeight)
                     continue;
 
-                Console.BackgroundColor = changedCharacter.Background;
-                Console.ForegroundColor = changedCharacter.Foreground;
-                Console.SetCursorPosition(changedCharacter.Left, changedCharacter.Top);
-                Console.Write(changedCharacter.Character);
+                writeGroupingBuffer.Clear();
+                
+                int x = 0;
+                do
+                {
+                    writeGroupingBuffer.Append(changedCharacters[i + x++].Character);
+                }
+                while (i + x < changedCharacters.Count && 
+                       changedCharacters[i].Top == changedCharacters[i + x].Top &&
+                       changedCharacters[i + x].Left == changedCharacters[i + x - 1].Left + 1 &&
+                       changedCharacters[i].Background == changedCharacters[i + x].Background &&
+                       changedCharacters[i].Foreground == changedCharacters[i + x].Foreground);
+
+                Console.BackgroundColor = changedCharacters[i].Background;
+                Console.ForegroundColor = changedCharacters[i].Foreground;
+                Console.SetCursorPosition(changedCharacters[i].Left, changedCharacters[i].Top);
+
+                Console.Write(writeGroupingBuffer);
+
+                if(writeGroupingBuffer.Length > 1)
+                {
+                    i += writeGroupingBuffer.Length - 1;
+                }
             }
 
             Console.BackgroundColor = backgroundColor;
@@ -208,7 +234,8 @@ namespace Cuit
             {
                 if (gotFocus)
                 {
-                    if (!_gotFocusEventRaised) { 
+                    if (!_gotFocusEventRaised)
+                    {
                         focusable.OnGotFocus();
                         _gotFocusEventRaised = true;
                     }

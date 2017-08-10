@@ -71,7 +71,7 @@ namespace Cuit
 
             return dirty;
         }
-
+        
         public void StartTrackingForObject(object obj)
         {
             _changeTracking.Clear();
