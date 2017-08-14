@@ -12,9 +12,9 @@ namespace Cuit.Sample
         {
             var textbox = new Textbox(5, 2);
             textbox.Width = Application.Width - 10;
-            Controls.Add(textbox);
+            RegisterControl(textbox);
 
-            Controls.Add(new Textbox(5, 5));
+            RegisterControl(new Textbox(5, 5));
         }
     }
 }

@@ -15,21 +15,21 @@ namespace Cuit.Sample
             var label = new Label(5, 2);
             label.Text = "Some text boxes below";
             label.Foreground = ConsoleColor.Red;
-            Controls.Add(label);
+            RegisterControl(label);
 
             var textbox = new Textbox(5, 5);
             textbox.Width = 40;
-            Controls.Add(textbox);
+            RegisterControl(textbox);
 
             var textbox2 = new Textbox(5, 10);
             textbox2.Width = 40;
-            Controls.Add(textbox2);
+            RegisterControl(textbox2);
 
             var label2 = new Label(50, 2);
             label2.Text = "And a listbox below me";
             label2.Foreground = ConsoleColor.Green;
             label2.Background = ConsoleColor.DarkMagenta;
-            Controls.Add(label2);
+            RegisterControl(label2);
 
             var listbox = new Listbox<DateTimeOffset?>(50, 4);
             listbox.Multiselect = false;
@@ -54,7 +54,7 @@ namespace Cuit.Sample
                 }
             };
 
-            Controls.Add(listbox);
+            RegisterControl(listbox);
 
             var button = new Button(5, 15);
             button.Text = "Click me";
@@ -62,7 +62,7 @@ namespace Cuit.Sample
             {
                 Application.SwitchTo<ExampleForm2>();
             };
-            Controls.Add(button);
+            RegisterControl(button);
 
             var starButton = new Button(18, 15);
             starButton.Text = "See stars";
@@ -70,7 +70,7 @@ namespace Cuit.Sample
             {
                 Application.SwitchTo<Starfield>();
             };
-            Controls.Add(starButton);
+            RegisterControl(starButton);
 
             var xmlFormButton = new Button(32, 15);
             xmlFormButton.Text = "Load from xml";
@@ -78,7 +78,7 @@ namespace Cuit.Sample
             {
                 Application.SwitchTo<ExampleXmlForm>();
             };
-            Controls.Add(xmlFormButton);
+            RegisterControl(xmlFormButton);
         }
     }
 
@@ -88,15 +88,15 @@ namespace Cuit.Sample
         {
             var label = new Label(5, 2);
             label.Text = "Form 2";
-            Controls.Add(label);
+            RegisterControl(label);
 
             var label2 = new Label(30, 2);
-            Controls.Add(label2);
+            RegisterControl(label2);
 
             var progressBar = new Progressbar(20, 9);
             progressBar.Maximum = 1;
             progressBar.Width = 40;
-            Controls.Add(progressBar);
+            RegisterControl(progressBar);
 
             var numericUpDown = new NumericUpDown(30, 5);
             numericUpDown.ValueChanged += (s, v) => label2.Text = v.ToString();
@@ -109,7 +109,7 @@ namespace Cuit.Sample
 
                 progressBar.Value = (int)v;
             };
-            Controls.Add(numericUpDown);
+            RegisterControl(numericUpDown);
 
             var button = new Button(5, 5);
             button.Text = "Go back";
@@ -117,7 +117,7 @@ namespace Cuit.Sample
             {
                 Application.GoBack();
             };
-            Controls.Add(button);
+            RegisterControl(button);
 
             var button2 = new Button(5, 9);
             button2.Text = "Increment";
@@ -125,11 +125,11 @@ namespace Cuit.Sample
             {
                 progressBar.Value++;
             };
-            Controls.Add(button2);
+            RegisterControl(button2);
 
             var checkbox = new Checkbox(5, 13);
             checkbox.Text = "Check me to be awesome";
-            Controls.Add(checkbox);
+            RegisterControl(checkbox);
 
             var image = new Image(5, 16);
             image.Border = Helpers.RectangleDrawStyle.Single;
@@ -153,7 +153,7 @@ namespace Cuit.Sample
        :cccc::::;...';;;;;,,,,,,.
        ,::::::;;;,'.  ..',,,,'''.
         ........          ......");
-            Controls.Add(image);
+            RegisterControl(image);
         }
     }
 

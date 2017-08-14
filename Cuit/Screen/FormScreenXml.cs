@@ -41,7 +41,7 @@ namespace Cuit.Screen
         public FormScreenXml(string xmlPath)
         {
             _controlsNameMapping = FormXmlParser.Parse(xmlPath);
-            Controls.AddRange(_controlsNameMapping.Values);
+            _controlsNameMapping.Values.ToList().ForEach(c => RegisterControl(c));
 
             _dynamicControlsObject = new DynamicControlsObject(_controlsNameMapping);
         }

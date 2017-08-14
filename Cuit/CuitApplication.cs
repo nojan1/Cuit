@@ -61,7 +61,9 @@ namespace Cuit
         {
             if (_screens.Count > 0)
             {
+
                 RaiseFocusEventIfApplicable(ActiveScreen, false);
+                ActiveScreen.UpdateRenderRequested -= OnUpdateRenderRequested;
             }
 
             _screens.Push(screen);
@@ -69,6 +71,9 @@ namespace Cuit
             _gotFocusEventRaised = false;
 
             RaiseLoadedEventIfApplicable(screen);
+
+            ActiveScreen.UpdateRenderRequested += OnUpdateRenderRequested;
+            UpdateAndRender(true);
 
             return screen;
         }
@@ -78,11 +83,15 @@ namespace Cuit
             if (_screens.Count > 1)
             {
                 RaiseFocusEventIfApplicable(ActiveScreen, false);
+                ActiveScreen.UpdateRenderRequested -= OnUpdateRenderRequested;
                 _screens.Pop();
             }
 ;
             _fullRedrawPending = true;
             _gotFocusEventRaised = false;
+
+            ActiveScreen.UpdateRenderRequested += OnUpdateRenderRequested;
+            UpdateAndRender(true);
 
             return ActiveScreen;
         }
@@ -115,7 +124,15 @@ namespace Cuit
             SetupConsole();
             RaiseLoadedEventIfApplicable(screen);
             _gotFocusEventRaised = false;
+
+            ActiveScreen.UpdateRenderRequested += OnUpdateRenderRequested;
+
             Loop();
+        }
+
+        private void OnUpdateRenderRequested(object sender, EventArgs e)
+        {
+            UpdateAndRender(false);
         }
 
         private void SetupConsole()
@@ -129,39 +146,29 @@ namespace Cuit
 
         private void Loop()
         {
-            Task.Run(async () =>
+            while (!Quit)
             {
-                while (!Quit)
+                if (_fullRedrawPending)
                 {
-                    if (_fullRedrawPending)
-                    {
-                        _fullRedrawPending = false;
-                        Console.Clear();
-                        Screenbuffer.Invalidate();
+                    _fullRedrawPending = false;
+                    Console.Clear();
 
-                        RaiseFocusEventIfApplicable(ActiveScreen, true);
-                        ActiveScreen.Update(Screenbuffer, true);
-                    }
-                    else
-                    {
-                        RaiseFocusEventIfApplicable(ActiveScreen, true);
-                        ActiveScreen.Update(Screenbuffer, false);
-                    }
-
-                    Render(Screenbuffer);
-
-                    if (Console.KeyAvailable)
-                    {
-                        var key = Console.ReadKey(true);
-                        ActiveScreen.HandleKeypress(key);
-                    }
-                    else
-                    {
-                        await Task.Delay(EventLoopIdleTime);
-                    }
-
+                    UpdateAndRender(true);
                 }
-            }).Wait();
+
+                var key = Console.ReadKey(true);
+                ActiveScreen.HandleKeypress(key);
+            }
+        }
+
+        private void UpdateAndRender(bool force)
+        {
+            if (force)
+                Screenbuffer.Invalidate();
+
+            RaiseFocusEventIfApplicable(ActiveScreen, true);
+            ActiveScreen.Update(Screenbuffer, force);
+            Render(Screenbuffer);
         }
 
         private void Render(Screenbuffer screenbuffer)
@@ -180,20 +187,20 @@ namespace Cuit
                                                 .ThenBy(c => c.Left)
                                                 .ToList();
 
-            for(int i = 0; i < changedCharacters.Count; i++)
+            for (int i = 0; i < changedCharacters.Count; i++)
             {
                 if (changedCharacters[i].Left < 0 || changedCharacters[i].Left >= Console.BufferWidth ||
                     changedCharacters[i].Top < 0 || changedCharacters[i].Top >= Console.BufferHeight)
                     continue;
 
                 writeGroupingBuffer.Clear();
-                
+
                 int x = 0;
                 do
                 {
                     writeGroupingBuffer.Append(changedCharacters[i + x++].Character);
                 }
-                while (i + x < changedCharacters.Count && 
+                while (i + x < changedCharacters.Count &&
                        changedCharacters[i].Top == changedCharacters[i + x].Top &&
                        changedCharacters[i + x].Left == changedCharacters[i + x - 1].Left + 1 &&
                        changedCharacters[i].Background == changedCharacters[i + x].Background &&
@@ -205,7 +212,7 @@ namespace Cuit
 
                 Console.Write(writeGroupingBuffer);
 
-                if(writeGroupingBuffer.Length > 1)
+                if (writeGroupingBuffer.Length > 1)
                 {
                     i += writeGroupingBuffer.Length - 1;
                 }

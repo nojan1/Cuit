@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Cuit.Sample
 {
@@ -23,7 +25,7 @@ namespace Cuit.Sample
         public int Slot { get; set; }
     }
 
-    class Starfield : IScreen, ILoaded
+    class Starfield : IScreen, ILoaded, IFocusable
     {
         private const int MAX_TOP = 30;
         private const int MAX_LEFT = 120;
@@ -42,9 +44,16 @@ namespace Cuit.Sample
         private int _currentSlot = 0;
         private readonly List<Star> _stars = new List<Star>();
 
+        public event EventHandler UpdateRenderRequested = delegate { };
+
         public CuitApplication Application { get; set; }
+        public bool IsEnabled { get => false; set { return; } }
 
         public event EventHandler Loaded = delegate { };
+        public event EventHandler GotFocus = delegate { };
+        public event EventHandler LostFocus = delegate { };
+
+        private CancellationTokenSource cancelTokenSource;
 
         public void HandleKeypress(ConsoleKeyInfo key)
         {
@@ -84,6 +93,27 @@ namespace Cuit.Sample
             }
 
             _currentSlot = rnd.Next(0, NUM_SLOTS);
+        }
+
+        public void OnGotFocus()
+        {
+            cancelTokenSource = new CancellationTokenSource();
+            Task.Run(async () =>
+            {
+                while (!cancelTokenSource.IsCancellationRequested)
+                {
+                    UpdateRenderRequested(this, new EventArgs());
+                    await Task.Delay(100, cancelTokenSource.Token);
+                }
+            }, cancelTokenSource.Token);
+        }
+
+        public void OnLostFocus()
+        {
+            if(cancelTokenSource != null)
+            {
+                cancelTokenSource.Cancel();
+            }
         }
     }
 }

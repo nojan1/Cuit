@@ -14,6 +14,7 @@ namespace Cuit.Screen
 
         protected virtual int _tabIndex { get; set; } = 0;
 
+        public event EventHandler UpdateRenderRequested = delegate { };
         public event EventHandler Loaded = delegate { };
         public event EventHandler GotFocus = delegate { };
         public event EventHandler LostFocus = delegate { };
@@ -45,6 +46,8 @@ namespace Cuit.Screen
             }
 
             ActiveControl?.HandleKeypress(key);
+
+            UpdateRenderRequested(this, new EventArgs());
         }
 
         public void Update(Screenbuffer buffer, bool force)
@@ -71,6 +74,26 @@ namespace Cuit.Screen
             foreach (var loadableControl in Controls.OfType<ILoaded>())
             {
                 loadableControl.OnLoaded();
+            }
+        }
+        
+        public void RegisterControl(IControl control)
+        {
+            Controls.Add(control);
+            control.IsDirtyChanged += Control_IsDirtyChanged;
+        }
+
+        public void UnregisterControl(IControl control)
+        {
+            Controls.Remove(control);
+            control.IsDirtyChanged -= Control_IsDirtyChanged;
+        }
+
+        private void Control_IsDirtyChanged(object sender, bool isDirty)
+        {
+            if (isDirty)
+            {
+                UpdateRenderRequested(this, new EventArgs());
             }
         }
 

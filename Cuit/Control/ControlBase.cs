@@ -28,7 +28,20 @@ namespace Cuit.Control
 
         public virtual int Height { get; set; }
 
-        public bool IsDirty { get; set; } = true;
+        public event EventHandler<bool> IsDirtyChanged = delegate { };
+        private bool isDirty = true;
+        public bool IsDirty
+        {
+            get => isDirty;
+            set
+            {
+                if(value != isDirty)
+                {
+                    isDirty = value;
+                    IsDirtyChanged(this, value);
+                }
+            }
+        }
 
         public ControlBase(int left, int top)
         {
